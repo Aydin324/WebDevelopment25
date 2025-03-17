@@ -1,2 +1,1 @@
-# WebDevelopment25
-Introduction to Web Programming
+# This code serves as an example of SPAPP implementation.
