@@ -20,7 +20,15 @@ $(document).ready(function () {
     load: "reviews.html",
     onCreate: function () {},
   });
+  app.route({
+    view: "login",
+    load: "login.html",
+  });
 
   // run app
   app.run();
+
+  $("main#spapp").on("click", "#loginbtn", function () {
+    window.location.hash = "#login"; // Update the URL hash
+  });
 });

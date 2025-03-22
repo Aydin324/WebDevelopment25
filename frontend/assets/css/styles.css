@@ -11,6 +11,11 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
+  --coffee-bean: #7c444f; /* Dark, rich coffee bean color */
+  --coffee-grounds: #9f5255; /* Muted, earthy coffee grounds color */
+  --coffee-brew: #e16a54; /* Warm, reddish-brown brewed coffee color */
+  --coffee-latte: #f39e60;
+
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
@@ -8449,10 +8454,11 @@ fieldset:disabled .btn {
 
 .bg-primary {
   --bs-bg-opacity: 1;
-  background-color: rgba(
-    var(--bs-primary-rgb),
-    var(--bs-bg-opacity)
-  ) !important;
+  /*background-color: var(--coffee-bean) !important;*/
+  background-image: url("../img/coffee-beans.png");
+  background-size: cover; /* Ensures the image covers the entire element */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat;
 }
 
 .bg-secondary {
@@ -11235,6 +11241,7 @@ html {
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-weight: 700;
+  background-color: black !important;
 }
 #mainNav .navbar-brand {
   color: #fff;
@@ -11351,10 +11358,10 @@ html {
   left: 0;
   transition: all 0.2s ease-in-out;
   opacity: 0;
-  background-color: rgba(26, 188, 156, 0.9);
+  background-color: var(--coffee-brew);
 }
 .portfolio .portfolio-item .portfolio-item-caption:hover {
-  opacity: 1;
+  opacity: 0.8;
 }
 .portfolio
   .portfolio-item
