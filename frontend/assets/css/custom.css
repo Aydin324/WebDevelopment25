@@ -69,12 +69,14 @@
 }
 
 .home-container-secondary {
-  background-color: var(--coffee-grounds);
-  opacity: 55%;
+  border: 2px solid gray;
   border-top-left-radius: 55px;
   border-bottom-right-radius: 55px;
-  color: black !important;
+  color: rgba(0, 0, 0, 1) !important;
   margin-top: 2rem;
+  margin-bottom: 1rem;
+  max-width: 900px !important;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .subdescript {
@@ -108,4 +110,21 @@
   margin-top: -6rem;
   padding-bottom: 2rem;
   padding-top: 6rem;
+}
+
+.map-container {
+  margin: 20px auto; /* Center the map */
+  max-width: 600px; /* Set a max width */
+  border: 2px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Ensure the map stays within the container */
+}
+
+#about {
+  padding-bottom: 1rem;
+}
+
+#recognised {
+  height: 200px;
+  width: 200px;
 }
