@@ -1,6 +1,6 @@
 <section>
   <div class="container d-flex justify-content-center">
-    <form class="login-form" id="login-form" style="display: none">
+    <form class="login-form" id="login-form">
       <h1 class="h3 mb-3 font-weight-normal text-center">Please sign in</h1>
       <label for="username" class="sr-only">Username</label>
       <input
@@ -20,14 +20,20 @@
         required
       />
       <div class="form-actions">
-        <button class="btn btn-lg btn-primary" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary" type="submit" id="loginbtn">
+          Sign in
+        </button>
         <a href="" class="register-link">Don't have an account? REGISTER</a>
       </div>
     </form>
 
     <!-- REGISTRATION FORM -->
 
-    <form class="registration-form" id="registration-form" style="">
+    <form
+      class="registration-form"
+      id="registration-form"
+      style="display: none"
+    >
       <h1 class="h3 mb-3 font-weight-normal text-center">Create an Account</h1>
 
       <!-- Username Field -->

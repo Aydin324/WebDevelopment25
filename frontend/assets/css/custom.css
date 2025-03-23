@@ -66,6 +66,7 @@
   border-top-left-radius: 55px;
   border-bottom-right-radius: 55px;
   color: black !important;
+  border: 1px solid grey;
 }
 
 .home-container-secondary {
@@ -127,4 +128,91 @@
 #recognised {
   height: 200px;
   width: 200px;
+}
+
+/* REVIEWS */
+ž .review-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-box h5 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.review-box p {
+  font-size: 14px;
+  color: #555;
+}
+
+.stars {
+  color: #ffc107; /* Gold color for stars */
+  margin-top: 10px;
+}
+
+/* SUBSCRIPTIONS */
+
+.subscription .row {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.subscription .row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.subscription img {
+  max-width: 100%;
+  height: auto;
+}
+
+.subscription h5 {
+  font-size: 1.25rem;
+}
+
+.subscription p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Past Orders Section */
+.order-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-box img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.order-box h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-box p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-box .price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #28a745; /* Green color for price */
+  margin-bottom: 0.5rem;
+}
+
+.order-box .text-muted {
+  font-size: 0.8rem;
 }

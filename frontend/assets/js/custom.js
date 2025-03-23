@@ -11,8 +11,8 @@ $(document).ready(function () {
   });
   app.route({ view: "products", load: "products.html" });
   app.route({
-    view: "orders",
-    load: "orders.html",
+    view: "view_profile",
+    load: "view_profile.html",
     onCreate: function () {},
   });
   app.route({
@@ -29,6 +29,6 @@ $(document).ready(function () {
   app.run();
 
   $("main#spapp").on("click", "#loginbtn", function () {
-    window.location.hash = "#login"; // Update the URL hash
+    window.location.hash = "#view_profile"; // Update the URL hash
   });
 });
