@@ -1,3 +1,10 @@
+:root {
+  --coffee-bean: #7c444f; /* Dark, rich coffee bean color */
+  --coffee-grounds: #9f5255; /* Muted, earthy coffee grounds color */
+  --coffee-brew: #e16a54; /* Warm, reddish-brown brewed coffee color */
+  --coffee-latte: #f39e60;
+}
+
 .page-section-heading {
   margin-top: 30px;
 }
@@ -61,6 +68,15 @@
   color: black !important;
 }
 
+.home-container-secondary {
+  background-color: var(--coffee-grounds);
+  opacity: 55%;
+  border-top-left-radius: 55px;
+  border-bottom-right-radius: 55px;
+  color: black !important;
+  margin-top: 2rem;
+}
+
 .subdescript {
   font-size: larger;
 }
@@ -81,4 +97,15 @@
   height: 200px; /* Set a fixed height for all images */
   object-fit: cover; /* Scale the image to cover the container without distorting it */
   border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+#imageAsBackground {
+  /*background-color: var(--coffee-bean) !important;*/
+  background-image: url("../img/coffee-beans.png");
+  background-size: cover; /* Ensures the image covers the entire element */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat;
+  margin-top: -6rem;
+  padding-bottom: 2rem;
+  padding-top: 6rem;
 }

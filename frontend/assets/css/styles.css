@@ -8454,11 +8454,6 @@ fieldset:disabled .btn {
 
 .bg-primary {
   --bs-bg-opacity: 1;
-  /*background-color: var(--coffee-bean) !important;*/
-  background-image: url("../img/coffee-beans.png");
-  background-size: cover; /* Ensures the image covers the entire element */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat;
 }
 
 .bg-secondary {
