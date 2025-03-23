@@ -11174,7 +11174,7 @@ html {
 }
 
 .page-section {
-  padding: 6rem 0;
+  padding: 6rem 0 0 0;
 }
 .page-section .page-section-heading {
   font-size: 2.25rem;
@@ -11348,7 +11348,7 @@ html {
   cursor: pointer;
   position: relative;
   display: block;
-  max-width: 25rem;
+  max-width: 23rem;
   border-radius: 0.5rem;
   overflow: hidden;
 }
