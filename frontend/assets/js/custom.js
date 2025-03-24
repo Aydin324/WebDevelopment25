@@ -24,10 +24,17 @@ $(document).ready(function () {
     view: "login",
     load: "login.html",
   });
+  app.route({
+    view: "view_product",
+    load: "view_product.html",
+  });
 
   // run app
   app.run();
 
+  $("main#spapp").on("click", ".portfolio-item", function () {
+    window.location.hash = "#view_product"; // Update the URL hash
+  });
   $("main#spapp").on("click", "#loginbtn", function () {
     window.location.hash = "#view_profile"; // Update the URL hash
   });
