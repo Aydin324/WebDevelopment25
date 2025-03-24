@@ -1,60 +1,317 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-  display: block;
-}
-body {
-  line-height: 1;
-}
-ol, ul {
-  list-style: none;
-}
-blockquote, q {
-  quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
+:root {
+  --coffee-bean: #7c444f; /* Dark, rich coffee bean color */
+  --coffee-grounds: #9f5255; /* Muted, earthy coffee grounds color */
+  --coffee-brew: #e16a54; /* Warm, reddish-brown brewed coffee color */
+  --coffee-latte: #f39e60;
 }
 
-html { line-height: 1.5; font-family: sans-serif; font-weight: normal; color: rgba(0,0,0,0.87); }
-body { margin:0; }
+.btn-primary {
+  background-color: var(--coffee-latte) !important;
+  border-color: var(--coffee-latte) !important;
+}
 
-nav { height:50px; line-height:50px; background:#00acc1; position:fixed; top:0; left:0; width:100%; }
-nav ul li { display:block; float:left; width:33.33%; text-align:center; }
-nav ul li a { color:#fff; text-decoration:none; }
+a.register-link {
+  color: var(--coffee-latte) !important;
+}
 
-main#spapp > section { padding:60px 10px 10px 10px; background:#ffcdd2; }  
-main#spapp > section#view_2 { background:#90caf9; }  
-main#spapp > section#view_3 { background:#a5d6a7; } 
-main#spapp > section#error_404 { background:#b71c1c; color:#fff; }
-main#spapp h1 { font-size: 4.2rem; line-height: 110%; margin: 2.1rem 0 1.68rem 0; text-align:center; }
+.page-section-heading {
+  margin-top: 30px;
+}
+
+.navbar {
+  opacity: 80%;
+}
+
+#login-form,
+#registration-form {
+  margin-top: 15%;
+  border: 4px solid gray;
+  max-width: 70%;
+  min-width: 55%;
+  padding: 20px;
+  border-top-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 800px) {
+  #login-form,
+  #registration-form {
+    margin-top: 150px;
+    max-width: 90%;
+    min-width: 75%;
+  }
+}
+
+.form-control {
+  margin: 20px 0;
+  max-width: 380px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.form-actions .btn {
+  margin-bottom: 10px;
+}
+
+.register-link {
+  text-align: center;
+}
+
+#saccaria {
+  margin-top: 40px;
+  max-width: 300px;
+  max-height: auto;
+}
+
+.home-container {
+  background-color: white;
+  opacity: 95%;
+  border-top-left-radius: 55px;
+  border-bottom-right-radius: 55px;
+  color: black !important;
+  border: 1px solid grey;
+}
+
+.home-container-secondary {
+  border: 2px solid gray;
+  border-top-left-radius: 55px;
+  border-bottom-right-radius: 55px;
+  color: rgba(0, 0, 0, 1) !important;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  max-width: 900px !important;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.subdescript {
+  font-size: larger;
+}
+
+@media (min-width: 800px) {
+  .home-container {
+    margin-top: 30px;
+  }
+}
+
+.item-description {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.portfolio-item img {
+  width: 100%; /* Make the image fill the container */
+  height: 200px; /* Set a fixed height for all images */
+  object-fit: cover; /* Scale the image to cover the container without distorting it */
+  border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+#imageAsBackground {
+  /*background-color: var(--coffee-bean) !important;*/
+  background-image: url("../img/coffee-beans.png");
+  background-size: cover; /* Ensures the image covers the entire element */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat;
+  margin-top: -6rem;
+  padding-bottom: 2rem;
+  padding-top: 6rem;
+}
+
+.map-container {
+  margin: 20px auto; /* Center the map */
+  max-width: 600px; /* Set a max width */
+  border: 2px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Ensure the map stays within the container */
+}
+
+#about {
+  padding-bottom: 1rem;
+}
+
+#recognised {
+  height: 200px;
+  width: 200px;
+}
+
+/* REVIEWS */
+.review-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-box h5 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.review-box p {
+  font-size: 14px;
+  color: #555;
+}
+
+.stars {
+  color: #ffc107; /* Gold color for stars */
+  margin-top: 10px;
+}
+
+/* SUBSCRIPTIONS */
+
+.subscription .row {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.subscription .row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.subscription img {
+  max-width: 100%;
+  height: auto;
+}
+
+.subscription h5 {
+  font-size: 1.25rem;
+}
+
+.subscription p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Past Orders Section */
+.order-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-box img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.order-box h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-box p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-box .price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--coffee-brew); /* Green color for price */
+  margin-bottom: 0.5rem;
+}
+
+.order-box .text-muted {
+  font-size: 0.8rem;
+}
+
+/* view product css */
+/* Product Image Wrapper */
+.product-image-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-wrapper img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/3; /* Ensures 4:3 ratio */
+  object-fit: cover;
+}
+
+/* Product Details */
+.product-details {
+  padding: 20px;
+}
+
+.product-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.product-info p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.product-info strong {
+  color: #333;
+}
+
+/* Product Description */
+.product-description h5 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.product-description p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Product Price */
+.product-price .price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--coffee-brew); /* color for price */
+  margin-bottom: 0.5rem;
+}
+
+.product-price .text-muted {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Product Actions */
+.product-actions .btn {
+  font-size: 1rem;
+  padding: 10px 20px;
+}
+
+.product-actions .btn-primary {
+  background-color: var(--coffee-latte);
+  border-color: var(--coffee-latte);
+}
+
+.product-actions .btn-primary:hover {
+  background-color: var(--coffee-latte);
+  border-color: var(--coffee-latte);
+}
+
+.product-actions .btn-outline-secondary {
+  border-color: #ddd;
+  color: #333;
+}
+
+.product-actions .btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}

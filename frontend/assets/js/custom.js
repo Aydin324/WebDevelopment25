@@ -1,22 +1,41 @@
-$(document).ready(function() {
-
+$(document).ready(function () {
   $("main#spapp > section").height($(document).height() - 60);
 
-  var app = $.spapp({pageNotFound : 'error_404'}); // initialize
+  var app = $.spapp({ pageNotFound: "error_404" }); // initialize
 
   // define routes
   app.route({
-    view: 'view_1',
-    onCreate: function() { $("#view_1").append($.now()+': Written on create<br/>'); },
-    onReady: function() { $("#view_1").append($.now()+': Written when ready<br/>'); }
+    view: "home",
+    onCreate: function () {},
+    onReady: function () {},
   });
-  app.route({view: 'view_2', load: 'view_2.html' });
+  app.route({ view: "products", load: "products.html" });
   app.route({
-    view: 'view_3', 
-    onCreate: function() { $("#view_3").append("I'm the third view"); }
+    view: "view_profile",
+    load: "view_profile.html",
+    onCreate: function () {},
+  });
+  app.route({
+    view: "reviews",
+    load: "reviews.html",
+    onCreate: function () {},
+  });
+  app.route({
+    view: "login",
+    load: "login.html",
+  });
+  app.route({
+    view: "view_product",
+    load: "view_product.html",
   });
 
   // run app
   app.run();
 
+  $("main#spapp").on("click", ".portfolio-item", function () {
+    window.location.hash = "#view_product"; // Update the URL hash
+  });
+  $("main#spapp").on("click", "#loginbtn", function () {
+    window.location.hash = "#view_profile"; // Update the URL hash
+  });
 });
