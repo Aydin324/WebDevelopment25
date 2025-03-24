@@ -1,3 +1,0 @@
-Tables: Products, Categories, Users, Orders, Reviews
-
-Navbar: Home, Products, Orders, Reviews
