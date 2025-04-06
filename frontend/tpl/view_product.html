@@ -28,6 +28,77 @@
               <p class="mb-2"><strong>Roast Level:</strong> Medium</p>
               <p class="mb-2"><strong>Origin:</strong> Colombia</p>
             </div>
+
+            <!-- Variant Selection (Radio Buttons Styled as Buttons) -->
+            <div class="variant-selection mb-4">
+              <h5 class="mb-3">Select Variant</h5>
+              <div class="btn-group" role="group">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="variant"
+                  id="variant1"
+                  autocomplete="off"
+                  checked
+                />
+                <label class="btn btn-outline-primary" for="variant1"
+                  >Whole Bean</label
+                >
+
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="variant"
+                  id="variant2"
+                  autocomplete="off"
+                />
+                <label class="btn btn-outline-primary" for="variant2"
+                  >Ground (Medium)</label
+                >
+
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="variant"
+                  id="variant3"
+                  autocomplete="off"
+                />
+                <label class="btn btn-outline-primary" for="variant3"
+                  >Ground (Fine)</label
+                >
+              </div>
+            </div>
+
+            <!-- Quantity Counter -->
+            <div class="quantity-counter mb-4">
+              <h5 class="mb-3">Quantity</h5>
+              <div class="input-group" style="width: 150px">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="decrement-qty"
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  class="text-center"
+                  value="1"
+                  min="1"
+                  max="10"
+                  id="quantity"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="increment-qty"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- Description -->
             <div class="product-description mb-4">
               <h5 class="mb-3">Description</h5>
               <p class="text-muted">
@@ -38,6 +109,8 @@
                 who appreciate a smooth and aromatic brew.
               </p>
             </div>
+
+            <!-- Price & Actions -->
             <div class="product-price mb-4">
               <h3 class="price">44.99 BAM</h3>
               <p class="text-muted small">Free Shipping</p>

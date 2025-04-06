@@ -323,3 +323,28 @@ a.register-link {
   background-color: #f8f9fa;
   border-color: #ccc;
 }
+
+/* Variant Buttons - Active State */
+.btn-group .btn-outline-primary:active,
+.btn-group .btn-outline-primary.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* Quantity Counter - Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Quantity Counter - Center align text */
+#quantity {
+  text-align: center;
+}
+
+#decrement-qty,
+#increment-qty,
+#quantity {
+  height: 38px; /* Match Bootstrap's default btn height */
+}
