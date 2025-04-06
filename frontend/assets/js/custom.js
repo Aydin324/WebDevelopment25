@@ -25,6 +25,10 @@ $(document).ready(function () {
     load: "login.html",
   });
   app.route({
+    view: "admin_panel",
+    load: "admin_panel.html",
+  });
+  app.route({
     view: "view_product",
     load: "view_product.html",
   });
@@ -35,7 +39,18 @@ $(document).ready(function () {
   $("main#spapp").on("click", ".portfolio-item", function () {
     window.location.hash = "#view_product"; // Update the URL hash
   });
+  //temp - go to admin panel
   $("main#spapp").on("click", "#loginbtn", function () {
-    window.location.hash = "#view_profile"; // Update the URL hash
+    window.location.hash = "#admin_panel"; // Update the URL hash
+  });
+
+  $(document).on("click", "#decrement-qty", function () {
+    const input = $("#quantity");
+    if (parseInt(input.val()) > 1) input.val(parseInt(input.val()) - 1);
+  });
+
+  $(document).on("click", "#increment-qty", function () {
+    const input = $("#quantity");
+    if (parseInt(input.val()) < 10) input.val(parseInt(input.val()) + 1);
   });
 });

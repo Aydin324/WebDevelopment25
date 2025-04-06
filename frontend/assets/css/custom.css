@@ -41,6 +41,11 @@ a.register-link {
     max-width: 90%;
     min-width: 75%;
   }
+
+  .home-container,
+  .home-container-secondary {
+    max-width: 95% !important;
+  }
 }
 
 .form-control {
@@ -85,7 +90,6 @@ a.register-link {
   color: rgba(0, 0, 0, 1) !important;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  max-width: 900px !important;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
 }
 
@@ -96,6 +100,10 @@ a.register-link {
 @media (min-width: 800px) {
   .home-container {
     margin-top: 30px;
+  }
+
+  .home-container-secondary {
+    max-width: 900px !important;
   }
 }
 
@@ -314,4 +322,29 @@ a.register-link {
 .product-actions .btn-outline-secondary:hover {
   background-color: #f8f9fa;
   border-color: #ccc;
+}
+
+/* Variant Buttons - Active State */
+.btn-group .btn-outline-primary:active,
+.btn-group .btn-outline-primary.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* Quantity Counter - Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Quantity Counter - Center align text */
+#quantity {
+  text-align: center;
+}
+
+#decrement-qty,
+#increment-qty,
+#quantity {
+  height: 38px; /* Match Bootstrap's default btn height */
 }
