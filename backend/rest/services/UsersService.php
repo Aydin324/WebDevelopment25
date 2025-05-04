@@ -37,6 +37,11 @@ class UsersService extends BaseService {
     public function authenticate(string $email, string $password): array {
         $user = $this->getByEmail($email);
         
+        //DELETE THIS
+        if (!$user) {
+            throw new RuntimeException("!user ovo ono");
+        }
+
         if (!$user || !$this->verifyPassword($password, $user['password_hash'])) {
             throw new RuntimeException("Invalid credentials");
         }
@@ -88,5 +93,10 @@ class UsersService extends BaseService {
         $this->dao->update($userId, [
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    //helper - get by email
+    public function getByEmail($email){
+        return $this->dao->getByParam('email', $email);
     }
 }

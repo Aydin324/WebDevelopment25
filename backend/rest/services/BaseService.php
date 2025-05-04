@@ -4,14 +4,23 @@ require_once __DIR__ . '/../dao/BaseDAO.php';
 class BaseService {
     protected $dao;
     protected $allowedFields = []; // Override in child classes
+    protected $table;
 
     public function __construct($table) {
         $this->dao = new BaseDAO($table);
+        $this->table = $table;
     }
 
     public function getAll() {
         try {
-            return $this->dao->getAll();
+            $results = $this->dao->getAll();
+            if($this->table=="users"){
+                $results = array_map(function($user){
+                    unset($user['password_hash']);
+                    return $user;
+                }, $results);
+            }
+            return $results;
         } catch (PDOException $e) {
             throw new RuntimeException("Database error fetching records");
         }
@@ -19,11 +28,13 @@ class BaseService {
 
     public function getById($id) {
         $this->validateId($id);
-        
         try {
             $result = $this->dao->getById($id);
             if (!$result) {
                 throw new RuntimeException("Record not found");
+            }
+            if($this->table == "users"){
+                unset($result['password_hash']);
             }
             return $result;
         } catch (PDOException $e) {
