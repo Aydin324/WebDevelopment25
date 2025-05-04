@@ -8,9 +8,35 @@ Flight::register('reviewsService', 'ReviewsService');
 Flight::register('subscriptionsService', 'SubscriptionsService');
 Flight::register('userSubscriptionsService', 'UserSubscriptionsService');
 
+
+
 // ==== USERS ====
 
-//users - get all
+/**
+ * @OA\OpenApi(
+ *     @OA\Info(
+ *         title="Hercafe API",
+ *         version="1.0.0",
+ *         description="API documentation for the Hercafe backend"
+ *     )
+ * )
+ */
+
+/**
+ * @OA\PathItem(path="/users")
+ */
+
+/**
+ * @OA\Get(
+ *     path="/users",
+ *     summary="Get all users",
+ *     tags={"Users"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of users"
+ *     )
+ * )
+ */
 Flight::route('GET /users', function(){
     Flight::json(Flight::usersService()->getAll());
 });
