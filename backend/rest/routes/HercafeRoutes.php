@@ -13,16 +13,6 @@ Flight::register('userSubscriptionsService', 'UserSubscriptionsService');
 // ==== USERS ====
 
 /**
- * @OA\OpenApi(
- *     @OA\Info(
- *         title="Hercafe API",
- *         version="1.0.0",
- *         description="API documentation for the Hercafe backend"
- *     )
- * )
- */
-
-/**
  * @OA\PathItem(path="/users")
  */
 
