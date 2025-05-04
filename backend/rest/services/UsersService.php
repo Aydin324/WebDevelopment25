@@ -34,13 +34,9 @@ class UsersService extends BaseService {
         }
     }
 
+    // ISSUE - return password_hash
     public function authenticate(string $email, string $password): array {
         $user = $this->getByEmail($email);
-        
-        //DELETE THIS
-        if (!$user) {
-            throw new RuntimeException("!user ovo ono");
-        }
 
         if (!$user || !$this->verifyPassword($password, $user['password_hash'])) {
             throw new RuntimeException("Invalid credentials");
