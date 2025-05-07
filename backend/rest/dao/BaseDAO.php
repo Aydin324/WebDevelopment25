@@ -40,6 +40,14 @@ class BaseDAO {
         return $stmt->fetch();
     }
 
+    public function getByParam($column_name, $value){
+        $stmt = $this->connection->prepare("SELECT * FROM " . $this->table . " WHERE " . $column_name . "= :value");
+        $stmt->bindParam(':value', $value);
+        $stmt->execute();
+
+        return $stmt->fetch();
+    }
+
     public function insert($data) {
         $columns = implode(", ", array_keys($data));
         $placeholders = ":" . implode(", :", array_keys($data));
