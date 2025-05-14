@@ -34,6 +34,16 @@ class OrdersService extends BaseService {
         }
     }
 
+    public function getByUserId(int $userId): array {
+        $this->validateId($userId);
+        
+        try {
+            return $this->dao->getByUserId($userId) ?: [];
+        } catch (PDOException $e) {
+            throw new RuntimeException("Failed to fetch user orders: " . $e->getMessage());
+        }
+    }
+
     // Create new order (with full validation)
     public function createOrder(array $orderData): int {
         $this->validateOrderData($orderData);
