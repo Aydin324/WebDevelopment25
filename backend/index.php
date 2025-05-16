@@ -6,7 +6,7 @@ require 'rest/routes/ProductsRoutes.php';
 require 'rest/routes/ReviewsRoutes.php';
 require 'rest/routes/SubscriptionsRoutes.php';
 require 'rest/routes/PaymentsRoutes.php';
-require 'rest/routes/UsersSubscriptions.php';
+require 'rest/routes/UsersSubscriptionsRoutes.php';
 require 'rest/routes/UsersRoutes.php';
 
 require 'rest/services/UsersService.php';
