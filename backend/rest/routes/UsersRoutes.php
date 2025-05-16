@@ -193,7 +193,6 @@ Flight::route('PUT /users/@id', function($id){
  *     path="/users/{id}",
  *     summary="Delete a user account",
  *     tags={"Users"},
- *     security={{"bearerAuth": {}}}, // Optional: Add if you implement auth
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
