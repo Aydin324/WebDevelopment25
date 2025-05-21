@@ -8,6 +8,7 @@ require 'rest/routes/SubscriptionsRoutes.php';
 require 'rest/routes/PaymentsRoutes.php';
 require 'rest/routes/UsersSubscriptionsRoutes.php';
 require 'rest/routes/UsersRoutes.php';
+require 'rest/routes/AuthRoutes.php';
 
 require 'rest/services/UsersService.php';
 require 'rest/services/OrdersService.php';
@@ -16,6 +17,7 @@ require 'rest/services/ProductsService.php';
 require 'rest/services/ReviewsService.php';
 require 'rest/services/SubscriptionsService.php';
 require 'rest/services/UsersSubscriptionsService.php';
+require 'rest/services/AuthService.php';
 
 
 Flight::route('/', function() {  // Define the homepage route
