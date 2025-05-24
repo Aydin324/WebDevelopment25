@@ -2,6 +2,7 @@
 
 require_once 'BaseService.php';
 require_once __DIR__ . '/../dao/AuthDao.php';
+require_once __DIR__ . '/../dao/config.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -57,7 +58,7 @@ class AuthService extends BaseService {
        }
 
 
-       if(!$user || !password_verify($entity['password'], $user['password']))
+       if(!$user || !password_verify($entity['password'], $user['password_hash']))
            return ['success' => false, 'error' => 'Invalid username or password.'];
 
 
@@ -67,13 +68,13 @@ class AuthService extends BaseService {
            'user' => $user,
            'iat' => time(),
            // If this parameter is not set, JWT will be valid for life. This is not a good approach
-           'exp' => time() + (60 * 60 * 24) // valid for day
+           'exp' => time() + (60 * 15) // valid for 15 minutes
        ];
 
 
        $token = JWT::encode(
            $jwt_payload,
-           Config::JWT_SECRET(),
+           Database::JWT_SECRET(),
            'HS256'
        );
 

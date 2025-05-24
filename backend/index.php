@@ -1,6 +1,8 @@
 <?php
 require '../vendor/autoload.php'; // Load installed packages
 
+require 'rest/dao/config.php';
+
 require 'rest/routes/OrdersRoutes.php';
 require 'rest/routes/ProductsRoutes.php';
 require 'rest/routes/ReviewsRoutes.php';
@@ -19,9 +21,29 @@ require 'rest/services/SubscriptionsService.php';
 require 'rest/services/UsersSubscriptionsService.php';
 require 'rest/services/AuthService.php';
 
+Flight::route('/*', function() {
+   if(
+       strpos(Flight::request()->url, '/auth/login') === 0 ||
+       strpos(Flight::request()->url, '/auth/register') === 0
+   ) {
+       return TRUE;
+   } else {
+       try {
+           $token = Flight::request()->getHeader("Authentication");
+           if(!$token)
+               Flight::halt(401, "Missing authentication header");
 
-Flight::route('/', function() {  // Define the homepage route
-    echo 'Hello world!';
+
+           $decoded_token = JWT::decode($token, new Key(Database::JWT_SECRET(), 'HS256'));
+
+
+           Flight::set('user', $decoded_token->user);
+           Flight::set('jwt_token', $token);
+           return TRUE;
+       } catch (\Exception $e) {
+           Flight::halt(401, $e->getMessage());
+       }
+   }
 });
 
 Flight::start();  // Start FlightPHP

@@ -15,36 +15,6 @@ class UsersService extends BaseService {
         parent::__construct('users');
     }
 
-    //core methods    
-    public function registerUser(array $userData): int {
-        $this->validateRegistrationData($userData);
-        
-        $preparedData = [
-            'username' => $userData['username'],
-            'email' => $userData['email'],
-            'password_hash' => $this->hashPassword($userData['password']),
-            'role' => $userData['role'] ?? 'user', // Default role
-        ];
-
-        try {
-            return $this->dao->insert($preparedData);
-        } catch (PDOException $e) {
-            $this->handleDuplicateEntryError($e);
-            throw new RuntimeException("Registration failed due to database error");
-        }
-    }
-
-    // ISSUE - return password_hash
-    public function authenticate(string $email, string $password): array {
-        $user = $this->getByEmail($email);
-
-        if (!$user || !$this->verifyPassword($password, $user['password_hash'])) {
-            throw new RuntimeException("Invalid credentials");
-        }
-
-        return $user;
-    }
-
     //passwords    
     private function hashPassword(string $password): string {
         return password_hash($password, PASSWORD_BCRYPT);
