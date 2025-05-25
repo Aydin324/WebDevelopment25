@@ -65,10 +65,10 @@ class AuthService extends BaseService {
        unset($user['password']);
       
        $jwt_payload = [
-           'user' => $user,
-           'iat' => time(),
-           // If this parameter is not set, JWT will be valid for life. This is not a good approach
-           'exp' => time() + (60 * 15) // valid for 15 minutes
+            'user' => $user,
+            'role' => $user['role'],       // Explicitly include role at top level ← IMPORTANT
+            'iat' => time(),
+            'exp' => time() + (60 * 15) // valid for 15 minutes
        ];
 
 

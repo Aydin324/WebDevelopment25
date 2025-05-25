@@ -23,6 +23,10 @@ $(document).ready(function () {
   app.route({
     view: "login",
     load: "login.html",
+    onReady: function () {
+      console.log("Login/Register page loaded.");
+      UserService.init();
+    },
   });
   app.route({
     view: "admin_panel",
@@ -40,9 +44,11 @@ $(document).ready(function () {
     window.location.hash = "#view_product"; // Update the URL hash
   });
   //temp - go to admin panel
+  /*
   $("main#spapp").on("click", "#loginbtn", function () {
     window.location.hash = "#admin_panel"; // Update the URL hash
   });
+  */
 
   $(document).on("click", "#decrement-qty", function () {
     const input = $("#quantity");

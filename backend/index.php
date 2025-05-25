@@ -2,6 +2,7 @@
 require '../vendor/autoload.php'; // Load installed packages
 
 require 'rest/dao/config.php';
+require "middleware/AuthMiddleware.php";
 
 require 'rest/routes/OrdersRoutes.php';
 require 'rest/routes/ProductsRoutes.php';
@@ -21,6 +22,15 @@ require 'rest/services/SubscriptionsService.php';
 require 'rest/services/UsersSubscriptionsService.php';
 require 'rest/services/AuthService.php';
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+Flight::register('auth_middleware', "AuthMiddleware");
+
 Flight::route('/*', function() {
    if(
        strpos(Flight::request()->url, '/auth/login') === 0 ||
@@ -30,21 +40,14 @@ Flight::route('/*', function() {
    } else {
        try {
            $token = Flight::request()->getHeader("Authentication");
-           if(!$token)
-               Flight::halt(401, "Missing authentication header");
-
-
-           $decoded_token = JWT::decode($token, new Key(Database::JWT_SECRET(), 'HS256'));
-
-
-           Flight::set('user', $decoded_token->user);
-           Flight::set('jwt_token', $token);
-           return TRUE;
+           if(Flight::auth_middleware()->verifyToken($token))
+               return TRUE;
        } catch (\Exception $e) {
            Flight::halt(401, $e->getMessage());
        }
    }
 });
+
 
 Flight::start();  // Start FlightPHP
 ?>
