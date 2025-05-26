@@ -25,6 +25,7 @@ Flight::register('ordersService', 'OrdersService');
  */
 //orders - get all
 Flight::route('GET /orders', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::ordersService()->getAll());
 });
 
@@ -61,6 +62,7 @@ Flight::route('GET /orders', function(){
  */
 //orders - get single
 Flight::route('GET /orders/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::ordersService()->getById($id));
 });
 
@@ -96,6 +98,7 @@ Flight::route('GET /orders/@id', function($id){
  */
 //orders - get by status
 Flight::route('GET /orders/status/@status', function($status){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::ordersService()->getByStatus($status));
 });
 
@@ -136,6 +139,7 @@ Flight::route('GET /orders/status/@status', function($status){
  */
 //orders - create
 Flight::route('POST /orders', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::ordersService()->createOrder($data));
 });
@@ -182,6 +186,7 @@ Flight::route('POST /orders', function(){
  */
 //orders - update status
 Flight::route('PUT /orders/@id/status', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::ordersService()->updateStatus($id, $data['status']));
 });
@@ -218,6 +223,7 @@ Flight::route('PUT /orders/@id/status', function($id){
  */
 //orders - get by user id
 Flight::route('GET /orders/user/@user_id', function($user_id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::ordersService()->getByUserId($user_id));
 });
 
@@ -267,6 +273,7 @@ Flight::route('GET /orders/user/@user_id', function($user_id){
  */
 //orders - update
 Flight::route('PUT /orders/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::ordersService()->update($id, $data));
 });
@@ -306,5 +313,6 @@ Flight::route('PUT /orders/@id', function($id){
  */
 //orders - delete
 Flight::route('DELETE /orders/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::ordersService()->delete($id));
 });

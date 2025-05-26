@@ -25,6 +25,7 @@ Flight::register('subscriptionsService', 'SubscriptionsService');
  */
 //subscriptions - get all
 Flight::route('GET /subscriptions', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::subscriptionsService()->getAll());
 });
 
@@ -67,6 +68,7 @@ Flight::route('GET /subscriptions', function(){
  */
 //subscriptions - get by price range
 Flight::route('GET /subscriptions/price/@min/@max', function($min, $max){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::subscriptionsService()->getByPriceRange($min, $max));
 });
 
@@ -102,6 +104,7 @@ Flight::route('GET /subscriptions/price/@min/@max', function($min, $max){
  */
 //subscriptions - get by duration
 Flight::route('GET /subscriptions/duration/@months', function($months){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::subscriptionsService()->getByDuration($months));
 });
 
@@ -140,6 +143,7 @@ Flight::route('GET /subscriptions/duration/@months', function($months){
  */
 //subscriptions - calculate monthly price
 Flight::route('GET /subscriptions/@id/monthly-price', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::subscriptionsService()->calculateMonthlyPrice($id));
 });
 
@@ -172,6 +176,7 @@ Flight::route('GET /subscriptions/@id/monthly-price', function($id){
  */
 //subscriptions - create
 Flight::route('POST /subscriptions', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::subscriptionsService()->createSubscription($data));
 });
@@ -216,6 +221,7 @@ Flight::route('POST /subscriptions', function(){
  */
 //subscriptions - update
 Flight::route('PUT /subscriptions/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::subscriptionsService()->update($id, $data));
 });
@@ -255,5 +261,6 @@ Flight::route('PUT /subscriptions/@id', function($id){
  */
 //subscriptions - delete
 Flight::route('DELETE /subscriptions/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::subscriptionsService()->delete($id));
 });

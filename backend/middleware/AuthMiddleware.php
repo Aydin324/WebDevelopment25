@@ -3,7 +3,7 @@
 require_once 'rest/dao/config.php';
 
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Firebase\JWT\Key; 
 
 class AuthMiddleware {
    public function verifyToken($token){
@@ -16,7 +16,7 @@ class AuthMiddleware {
    }
    public function authorizeRole($requiredRole) {
        $user = Flight::get('user');
-       if ($user->role !== $requiredRole) {
+       if ($user->role !== $requiredRole && $user->role !== ROLES::ADMIN) {
            Flight::halt(403, 'Access denied: insufficient privileges');
        }
    }

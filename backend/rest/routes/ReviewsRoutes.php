@@ -36,6 +36,7 @@ Flight::register('reviewsService', 'ReviewsService');
  */
 //reviews - get by product
 Flight::route('GET /reviews/product/@product_id', function($product_id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByProductId($product_id));
 });
 
@@ -71,6 +72,7 @@ Flight::route('GET /reviews/product/@product_id', function($product_id){
  */
 //reviews - get by rating
 Flight::route('GET /reviews/rating/@rating', function($rating){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByRating($rating));
 });
 
@@ -112,6 +114,7 @@ Flight::route('GET /reviews/rating/@rating', function($rating){
  */
 //reviews - create
 Flight::route('POST /reviews', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::reviewsService()->createReview($data));
 });
@@ -149,6 +152,7 @@ Flight::route('POST /reviews', function(){
  */
 //reviews - get single
 Flight::route('GET /reviews/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getById($id));
 });
 
@@ -194,6 +198,7 @@ Flight::route('GET /reviews/@id', function($id){
  */
 //reviews - update
 Flight::route('PUT /reviews/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::reviewsService()->update($id, $data));
 });
@@ -233,5 +238,6 @@ Flight::route('PUT /reviews/@id', function($id){
  */
 //reviews - delete
 Flight::route('DELETE /reviews/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->delete($id));
 });

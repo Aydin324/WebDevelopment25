@@ -25,6 +25,7 @@ Flight::register('productsService', 'ProductsService');
  */
 //products - get all
 Flight::route('GET /products', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->getAll());
 });
 
@@ -61,6 +62,7 @@ Flight::route('GET /products', function(){
  */
 //products - get single
 Flight::route('GET /products/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->getById($id));
 });
 
@@ -96,6 +98,7 @@ Flight::route('GET /products/@id', function($id){
  */
 //products - search by name
 Flight::route('GET /products/search/@name', function($name){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->searchByName($name));
 });
 
@@ -145,6 +148,7 @@ Flight::route('GET /products/search/@name', function($name){
  */
 //products - update stock
 Flight::route('PUT /products/@id/stock', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::productsService()->updateStock($id, $data['quantity']));
 });
@@ -184,6 +188,7 @@ Flight::route('PUT /products/@id/stock', function($id){
  */
 //products - create product
 Flight::route('POST /products', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::productsService()->createProduct($data));
 });
@@ -233,6 +238,7 @@ Flight::route('POST /products', function(){
  */
 //products - update
 Flight::route('PUT /products/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::productsService()->update($id, $data));
 });
@@ -272,5 +278,6 @@ Flight::route('PUT /products/@id', function($id){
  */
 //products - delete
 Flight::route('DELETE /products/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::productsService()->delete($id));
 });

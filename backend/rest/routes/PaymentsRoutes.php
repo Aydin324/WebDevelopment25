@@ -37,6 +37,7 @@ Flight::register('paymentsService', 'PaymentsService');
  */
 //payments - get by order
 Flight::route('GET /payments/order/@order_id', function($order_id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::paymentsService()->getByOrder($order_id));
 });
 
@@ -75,6 +76,7 @@ Flight::route('GET /payments/order/@order_id', function($order_id){
  */
 //payments - create
 Flight::route('POST /payments', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::paymentsService()->createPayment($data));
 });
@@ -121,6 +123,7 @@ Flight::route('POST /payments', function(){
  */
 //payments - update status
 Flight::route('PUT /payments/@id/status', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::paymentsService()->updateStatus($id, $data['status']));
 });
@@ -157,6 +160,7 @@ Flight::route('PUT /payments/@id/status', function($id){
  */
 //payments - get by user id
 Flight::route('GET /payments/user/@user_id', function($user_id){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::paymentsService()->getByUserId($user_id));
 });
 
@@ -193,6 +197,7 @@ Flight::route('GET /payments/user/@user_id', function($user_id){
  */
 //payments - get by id
 Flight::route('GET /payments/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::paymentsService()->getById($id));
 });
 
@@ -240,6 +245,7 @@ Flight::route('GET /payments/@id', function($id){
  */
 //payments - update
 Flight::route('PUT /payments/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::paymentsService()->update($id, $data));
 });
@@ -279,5 +285,6 @@ Flight::route('PUT /payments/@id', function($id){
  */
 //payments - delete
 Flight::route('DELETE /payments/@id', function($id){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::paymentsService()->delete($id));
 });
