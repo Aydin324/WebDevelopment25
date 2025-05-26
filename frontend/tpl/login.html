@@ -25,12 +25,14 @@
         <button class="btn btn-lg btn-primary" type="submit" id="loginbtn">
           Sign in
         </button>
-        <a href="" class="register-link">Don't have an account? REGISTER</a>
+        <a id="switch_to_register" class="register-link" href="#"
+          >Don't have an account? REGISTER</a
+        >
       </div>
     </form>
 
     <!-- REGISTRATION FORM -->
-<!--
+
     <form
       class="registration-form"
       id="registration-form"
@@ -41,7 +43,8 @@
       <label for="username" class="sr-only">Username</label>
       <input
         type="text"
-        id="username"
+        name="username"
+        id="rusername"
         class="form-control mx-auto"
         placeholder="Username"
         required
@@ -51,7 +54,8 @@
       <label for="email" class="sr-only">Email</label>
       <input
         type="email"
-        id="email"
+        id="remail"
+        name="email"
         class="form-control mx-auto"
         placeholder="Email"
         required
@@ -60,7 +64,8 @@
       <label for="password" class="sr-only">Password</label>
       <input
         type="password"
-        id="password"
+        id="rpassword"
+        name="password"
         class="form-control mx-auto"
         placeholder="Password"
         required
@@ -77,8 +82,10 @@
 
       <div class="form-actions">
         <button class="btn btn-lg btn-primary" type="submit">Register</button>
+        <a id="switch_to_login" class="register-link" href="#"
+          >Already have an account? LOGIN</a
+        >
       </div>
     </form>
   </div>
-  -->
 </section>

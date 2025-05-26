@@ -3,5 +3,3 @@ let Constants = {
   USER_ROLE: "user",
   ADMIN_ROLE: "admin",
 };
-
-console.log("Constants loaded:", Constants);

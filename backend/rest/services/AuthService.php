@@ -12,7 +12,7 @@ class AuthService extends BaseService {
    private $auth_dao;
    public function __construct() {
        $this->auth_dao = new AuthDao();
-       parent::__construct(new AuthDao);
+       parent::__construct('users');
    }
 
 
@@ -22,28 +22,31 @@ class AuthService extends BaseService {
 
 
    public function register($entity) {  
-       if (empty($entity['email']) || empty($entity['password'])) {
-           return ['success' => false, 'error' => 'Email and password are required.'];
-       }
+    if (empty($entity['email']) || empty($entity['password']) || empty($entity['username'])) {
+        return ['success' => false, 'error' => 'Username, email and password are required.'];
+    }
 
+    $email_exists = $this->auth_dao->get_user_by_email($entity['email']);
+    if ($email_exists) {
+        return ['success' => false, 'error' => 'Email already registered.'];
+    }
 
-       $email_exists = $this->auth_dao->get_user_by_email($entity['email']);
-       if($email_exists){
-           return ['success' => false, 'error' => 'Email already registered.'];
-       }
+    $entity['password_hash'] = password_hash($entity['password'], PASSWORD_BCRYPT);
+    unset($entity['password']);  
 
+    $entity['role'] = 'user';  
+    $entity['created_at'] = date('Y-m-d H:i:s');  
+    $entity['updated_at'] = date('Y-m-d H:i:s');  
 
-       $entity['password'] = password_hash($entity['password'], PASSWORD_BCRYPT);
+    $result = parent::insert($entity);
 
+    if (!$result) {
+        return ['success' => false, 'error' => 'Database error creating record.'];
+    }
 
-       $entity = parent::add($entity);
+    return ['success' => true, 'data' => $result];             
+}
 
-
-       unset($entity['password']);
-
-
-       return ['success' => true, 'data' => $entity];             
-   }
 
 
    public function login($entity) {  
