@@ -13,7 +13,15 @@ $(document).ready(function () {
   app.route({
     view: "view_profile",
     load: "view_profile.html",
-    onCreate: function () {},
+    onReady: function () {
+      const token = localStorage.getItem("user_token");
+      if (token) {
+        const payload = Utils.parseJwt(token);
+        if (payload && payload.user && payload.user.username) {
+          $("#h2").text("Hello " + payload.user.username);
+        }
+      }
+    },
   });
   app.route({
     view: "reviews",
