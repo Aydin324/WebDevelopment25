@@ -20,6 +20,22 @@ class BaseDAO {
         $this->connection = Database::connect();
     }
 
+    //helper functions
+    protected function query($query, $params)
+    {
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    protected function query_unique($query, $params)
+    {
+        $results = $this->query($query, $params);
+        return reset($results);
+    }
+
+    // ----------------------------------------------------
+
     private function getPrimaryKey() {
         //maps primary key name using column name
         return $this->primaryKeys[$this->table] ?? 'id';

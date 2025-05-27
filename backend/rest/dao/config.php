@@ -25,5 +25,9 @@ class Database {
         }
         return self::$connection;
     }
+
+    public static function JWT_SECRET(){
+        return 'this_is_my_jwt_key_vjsbfaeufhaehgioag';
+    }
 }
 ?>

@@ -13,7 +13,15 @@ $(document).ready(function () {
   app.route({
     view: "view_profile",
     load: "view_profile.html",
-    onCreate: function () {},
+    onReady: function () {
+      const token = localStorage.getItem("user_token");
+      if (token) {
+        const payload = Utils.parseJwt(token);
+        if (payload && payload.user && payload.user.username) {
+          $("#h2").text("Hello " + payload.user.username);
+        }
+      }
+    },
   });
   app.route({
     view: "reviews",
@@ -23,6 +31,10 @@ $(document).ready(function () {
   app.route({
     view: "login",
     load: "login.html",
+    onReady: function () {
+      console.log("Login/Register page loaded.");
+      UserService.init();
+    },
   });
   app.route({
     view: "admin_panel",
@@ -39,10 +51,6 @@ $(document).ready(function () {
   $("main#spapp").on("click", ".portfolio-item", function () {
     window.location.hash = "#view_product"; // Update the URL hash
   });
-  //temp - go to admin panel
-  $("main#spapp").on("click", "#loginbtn", function () {
-    window.location.hash = "#admin_panel"; // Update the URL hash
-  });
 
   $(document).on("click", "#decrement-qty", function () {
     const input = $("#quantity");
@@ -52,5 +60,19 @@ $(document).ready(function () {
   $(document).on("click", "#increment-qty", function () {
     const input = $("#quantity");
     if (parseInt(input.val()) < 10) input.val(parseInt(input.val()) + 1);
+  });
+
+  $(document).on("click", "#switch_to_register", function (e) {
+    e.preventDefault(); // prevent the default link action
+
+    $("#login-form").hide();
+    $("#registration-form").show();
+  });
+
+  $(document).on("click", "#switch_to_login", function (e) {
+    e.preventDefault(); // prevent the default link action
+
+    $("#registration-form").hide();
+    $("#login-form").show();
   });
 });
