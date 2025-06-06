@@ -2,7 +2,7 @@
 
 require_once 'BaseService.php';
 require_once __DIR__ . '/../dao/AuthDao.php';
-require_once __DIR__ . '/../dao/config.php';
+require_once __DIR__ . '/../dao/config-first.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

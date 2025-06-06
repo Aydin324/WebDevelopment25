@@ -1,7 +1,7 @@
 <?php
 require '../vendor/autoload.php'; // Load installed packages
 
-require 'rest/dao/config.php';
+require 'rest/dao/config-first.php';
 require "middleware/AuthMiddleware.php";
 
 require 'rest/routes/OrdersRoutes.php';

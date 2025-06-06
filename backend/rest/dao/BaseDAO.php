@@ -1,6 +1,6 @@
 <?php
 
-require_once 'config.php';
+require_once 'config-first.php';
 
 class BaseDAO {
     protected $table;

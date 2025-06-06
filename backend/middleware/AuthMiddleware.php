@@ -1,6 +1,6 @@
 <?php
 
-require_once 'rest/dao/config.php';
+require_once 'rest/dao/config-first.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
