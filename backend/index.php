@@ -1,6 +1,12 @@
 <?php
 require '../vendor/autoload.php'; // Load installed packages
 
+// Enable error logging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+error_log("Starting application...");
+
 require 'rest/dao/config-first.php';
 require "middleware/AuthMiddleware.php";
 
@@ -25,13 +31,12 @@ require 'rest/services/AuthService.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_log("All required files loaded successfully");
 
 Flight::register('auth_middleware', "AuthMiddleware");
 
 Flight::route('/*', function() {
+   error_log("Received request to: " . Flight::request()->url);
    if(
        strpos(Flight::request()->url, '/auth/login') === 0 ||
        strpos(Flight::request()->url, '/auth/register') === 0
@@ -40,14 +45,16 @@ Flight::route('/*', function() {
    } else {
        try {
            $token = Flight::request()->getHeader("Authentication");
+           error_log("Received token: " . ($token ? "yes" : "no"));
            if(Flight::auth_middleware()->verifyToken($token))
                return TRUE;
        } catch (\Exception $e) {
+           error_log("Authentication error: " . $e->getMessage());
            Flight::halt(401, $e->getMessage());
        }
    }
 });
 
-
+error_log("Routes configured, starting Flight...");
 Flight::start();  // Start FlightPHP
 ?>

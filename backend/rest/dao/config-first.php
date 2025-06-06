@@ -8,8 +8,11 @@ class Database {
     public static function connect() {
         if (self::$connection === null) {
             try {
+                $dsn = "mysql:host=" . Config::DB_HOST() . ";port=" . Config::DB_PORT() . ";dbname=" . Config::DB_SCHEME();
+                error_log("Attempting to connect to database with DSN: " . $dsn);
+                
                 self::$connection = new PDO(
-                    "mysql:host=" . Config::DB_HOST() . ";port=" . Config::DB_PORT() . ";dbname=" . Config::DB_SCHEME(),
+                    $dsn,
                     Config::DB_USERNAME(),
                     Config::DB_PASSWORD(),
                     [
@@ -17,7 +20,9 @@ class Database {
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                     ]
                 );
+                error_log("Database connection successful");
             } catch (PDOException $e) {
+                error_log("Database connection failed: " . $e->getMessage());
                 die("Connection failed: " . $e->getMessage());
             }
         }
@@ -25,7 +30,7 @@ class Database {
     }
 
     public static function JWT_SECRET(){
-        return 'this_is_my_jwt_key_vjsbfaeufhaehgioag';
+        return Config::JWT_SECRET();
     }
 }
 ?>
