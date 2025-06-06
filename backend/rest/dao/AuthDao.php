@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/BaseDao.php';
+require_once __DIR__ . '/BaseDAO.php';
 
 class AuthDao extends BaseDao {
     protected $table_name;
