@@ -45,14 +45,16 @@ $(document).ready(function () {
   app.route({
     view: "view_product",
     load: "view_product.html",
+    onReady: function() {
+      const selectedType = sessionStorage.getItem('selected_product_type');
+      if (selectedType) {
+        ProductService.loadProductsByType(selectedType);
+      }
+    }
   });
 
   // run app
   app.run();
-
-  $("main#spapp").on("click", ".portfolio-item", function () {
-    window.location.hash = "#view_product"; // Update the URL hash
-  });
 
   $(document).on("click", "#decrement-qty", function () {
     const input = $("#quantity");

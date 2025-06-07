@@ -1,21 +1,43 @@
 var ProductService = {
     init: function() {
-
+        console.log("ProductService initialized");
+        
         // Event listener for product category clicks
-        $(document).on('click', '.product-category', function(e) {
+        $(document).on('click', '.portfolio-item', function(e) {
             e.preventDefault();
-            const categoryId = $(this).data('category-id');
-            ProductService.loadProductsByCategory(categoryId);
+            const type = $(this).data('type');
+            console.log("Clicked product type:", type);
+            
+            if (!type) {
+                console.error("No type found on clicked element");
+                return;
+            }
+            
+            // Store the type in sessionStorage so we can load it when view_product is ready
+            sessionStorage.setItem('selected_product_type', type);
+            window.location.hash = "#view_product";
         });
 
-        // Event listener for individual product clicks
-        $(document).on('click', '.product-item', function(e) {
-            e.preventDefault();
-            const productId = $(this).data('product-id');
-            window.location.hash = "#view_product";
-            ProductService.loadProductDetails(productId);
+        // Event listener for variant selection
+        $(document).on('change', '#variant', function() {
+            const selectedOption = $(this).find('option:selected');
+            const productId = selectedOption.data('product-id');
+            console.log("Selected variant product ID:", productId);
+            if (productId) {
+                ProductService.displayProductDetails(selectedOption.data('product'), ProductService.currentProducts);
+            }
         });
+
+        // If we're on the view_product page and have a stored type, load it
+        if (window.location.hash === '#view_product') {
+            const selectedType = sessionStorage.getItem('selected_product_type');
+            if (selectedType) {
+                ProductService.loadProductsByType(selectedType);
+            }
+        }
     },
+
+    currentProducts: null, // Store current products list
 
     loadProducts: function() {
         $.ajax({
@@ -46,13 +68,41 @@ var ProductService = {
         });
     },
 
+    loadProductsByType: function(type) {
+        console.log("Loading products for type:", type);
+        $.ajax({
+            url: Constants.PROJECT_BASE_URL + "products/type/" + encodeURIComponent(type),
+            type: "GET",
+            contentType: "application/json",
+            success: function(result) {
+                console.log("Received products:", result);
+                if (result.data && result.data.length > 0) {
+                    ProductService.currentProducts = result.data;
+                    // Load the first product's details
+                    ProductService.displayProductDetails(result.data[0], result.data);
+                } else {
+                    toastr.error("No products found for this category");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.error("Error loading products:", XMLHttpRequest.responseText);
+                toastr.error(XMLHttpRequest?.responseText ? XMLHttpRequest.responseText : "Error loading products");
+            }
+        });
+    },
+
     loadProductDetails: function(productId) {
         $.ajax({
             url: Constants.PROJECT_BASE_URL + "products/" + productId,
             type: "GET",
             contentType: "application/json",
             success: function(result) {
-                ProductService.displayProductDetails(result.data);
+                if (result.data) {
+                    // Get all products of the same type to populate variants
+                    ProductService.loadProductsByType(result.data.type);
+                } else {
+                    toastr.error("Product not found");
+                }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 toastr.error(XMLHttpRequest?.responseText ? XMLHttpRequest.responseText : "Error loading product details");
@@ -81,37 +131,69 @@ var ProductService = {
         $('#products-container').html(html);
     },
 
-    displayProductDetails: function(product) {
+    displayProductDetails: function(product, allProductsOfType) {
+        console.log("Displaying product:", product);
         let html = `
             <div class="container mt-5">
                 <div class="row">
                     <div class="col-md-6">
-                        <img src="${product.image_url || 'assets/img/default-product.jpg'}" class="img-fluid" alt="${product.name}">
+                        <div class="product-image-wrapper">
+                            <img src="${product.image_url || '../assets/img/products-images/default-product.jpg'}" 
+                                 alt="${product.name}" 
+                                 class="img-fluid rounded"/>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <h2>${product.name}</h2>
-                        <p class="lead">${product.description}</p>
-                        <p class="h3 mb-4">Price: $${product.price}</p>
-                        
-                        <div class="mb-4">
-                            <label for="variant">Select Variant:</label>
-                            <select class="form-control" id="variant">
-                                ${product.variants.map(variant => 
-                                    `<option value="${variant.id}">${variant.name} - $${variant.price}</option>`
-                                ).join('')}
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="quantity">Quantity:</label>
-                            <div class="input-group">
-                                <button class="btn btn-outline-secondary" id="decrement-qty">-</button>
-                                <input type="number" class="form-control" id="quantity" value="1" min="1" max="10">
-                                <button class="btn btn-outline-secondary" id="increment-qty">+</button>
+                        <div class="product-details">
+                            <h2 class="product-name mb-4">${product.name}</h2>
+                            <div class="product-info mb-4">
+                                <p class="mb-2"><strong>Type:</strong> ${product.type}</p>
+                                ${product.weight ? `<p class="mb-2"><strong>Weight:</strong> ${product.weight}</p>` : ''}
+                                ${product.dimensions ? `<p class="mb-2"><strong>Dimensions:</strong> ${product.dimensions}</p>` : ''}
+                                ${product.specifications ? `<p class="mb-2"><strong>Specifications:</strong> ${product.specifications}</p>` : ''}
+                            </div>
+
+                            <!-- Variant Selection -->
+                            <div class="variant-selection mb-4">
+                                <h5 class="mb-3">Select Variant</h5>
+                                <select class="form-control" id="variant">
+                                    ${allProductsOfType.map(variant => `
+                                        <option value="${variant.name}" 
+                                                data-product-id="${variant.product_id}"
+                                                data-product='${JSON.stringify(variant)}'
+                                                ${variant.product_id === product.product_id ? 'selected' : ''}>
+                                            ${variant.name} - $${variant.price}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+
+                            <!-- Quantity Counter -->
+                            <div class="quantity-counter mb-4">
+                                <h5 class="mb-3">Quantity</h5>
+                                <div class="input-group" style="width: 150px">
+                                    <button class="btn btn-outline-secondary" type="button" id="decrement-qty">-</button>
+                                    <input type="number" class="form-control text-center" value="1" min="1" max="10" id="quantity"/>
+                                    <button class="btn btn-outline-secondary" type="button" id="increment-qty">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="product-description mb-4">
+                                <h5 class="mb-3">Description</h5>
+                                <p class="text-muted">${product.description || 'No description available.'}</p>
+                            </div>
+
+                            <!-- Price & Actions -->
+                            <div class="product-price mb-4">
+                                <h3 class="price">$${product.price}</h3>
+                                <p class="text-muted small">Free Shipping</p>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-lg me-3">Add to Cart</button>
+                                <button class="btn btn-outline-secondary btn-lg">Buy Now</button>
                             </div>
                         </div>
-                        
-                        <button class="btn btn-primary btn-lg">Add to Cart</button>
                     </div>
                 </div>
             </div>

@@ -64,6 +64,14 @@ class BaseDAO {
         return $stmt->fetch();
     }
 
+    public function getAllByParam($column_name, $value){
+        $stmt = $this->connection->prepare("SELECT * FROM " . $this->table . " WHERE " . $column_name . "= :value");
+        $stmt->bindParam(':value', $value);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function insert($data) {
         $columns = implode(", ", array_keys($data));
         $placeholders = ":" . implode(", :", array_keys($data));

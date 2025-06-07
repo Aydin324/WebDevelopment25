@@ -6,6 +6,14 @@ class ProductsService extends BaseService {
         parent::__construct('products');
     }
 
+    public function getProductsByType($type) {
+        try {
+            return $this->dao->getAllByParam('type', $type);
+        } catch (Exception $e) {
+            throw new Exception("Error fetching products by type: " . $e->getMessage());
+        }
+    }
+
     //core methods    
     public function createProduct(array $productData): int {
         $this->validateProductData($productData);
