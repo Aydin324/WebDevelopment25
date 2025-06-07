@@ -9,7 +9,9 @@ $(document).ready(function () {
     onCreate: function () {},
     onReady: function () {},
   });
-  app.route({ view: "products", load: "products.html" });
+  app.route({ view: "products", load: "products.html", onReady: function() {
+    ProductService.init();
+  } });
   app.route({
     view: "view_profile",
     load: "view_profile.html",
