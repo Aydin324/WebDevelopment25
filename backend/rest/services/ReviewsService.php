@@ -1,5 +1,6 @@
 <?php
 require_once 'BaseService.php';
+require_once __DIR__ . '/../dao/ReviewsDAO.php';
 
 class ReviewsService extends BaseService {
     private const MIN_RATING = 1;
@@ -7,6 +8,15 @@ class ReviewsService extends BaseService {
     
     public function __construct() {
         parent::__construct('reviews');
+        $this->dao = new ReviewsDAO();
+    }
+
+    public function getAll() {
+        try {
+            return $this->dao->getAllWithDetails();
+        } catch (PDOException $e) {
+            throw new Exception("Error fetching reviews: " . $e->getMessage());
+        }
     }
 
     //core methods    

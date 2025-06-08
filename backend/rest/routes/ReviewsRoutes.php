@@ -6,6 +6,36 @@ Flight::register('reviewsService', 'ReviewsService');
 
 /**
  * @OA\Get(
+ *     path="/reviews",
+ *     summary="Get all reviews",
+ *     tags={"Reviews"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of all reviews",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/Review")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Failed to fetch reviews"
+ *     )
+ * )
+ */
+//reviews - get all
+Flight::route('GET /reviews', function(){
+    try {
+        $reviews = Flight::reviewsService()->getAll();
+        Flight::json(['data' => $reviews]);
+    } catch (Exception $e) {
+        error_log("Error fetching reviews: " . $e->getMessage());
+        Flight::json(['error' => 'Failed to fetch reviews'], 500);
+    }
+});
+
+/**
+ * @OA\Get(
  *     path="/reviews/product/{product_id}",
  *     summary="Get reviews by product ID",
  *     tags={"Reviews"},
@@ -114,6 +144,7 @@ Flight::route('GET /reviews/rating/@rating', function($rating){
  */
 //reviews - create
 Flight::route('POST /reviews', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::reviewsService()->createReview($data));
 });

@@ -6,6 +6,27 @@ class ReviewsDAO extends BaseDAO {
         parent::__construct('reviews');
     }
 
+    public function getAllWithDetails() {
+        return $this->query(
+            "SELECT r.*, 
+                    u.username as user_name, 
+                    p.name as product_name,
+                    s.name as subscription_name,
+                    COALESCE(p.name, s.name) as item_name,
+                    CASE 
+                        WHEN p.name IS NOT NULL THEN 'product'
+                        WHEN s.name IS NOT NULL THEN 'subscription'
+                        ELSE 'unknown'
+                    END as review_type
+             FROM reviews r 
+             LEFT JOIN users u ON r.user_id = u.user_id 
+             LEFT JOIN products p ON r.product_id = p.product_id 
+             LEFT JOIN subscriptions s ON r.subscription_id = s.subscription_id
+             ORDER BY r.created_at DESC",
+            []
+        );
+    }
+
     public function getByProductId($product_id) {
         $stmt = $this->connection->prepare("SELECT * FROM reviews WHERE product_id = :product_id");
         $stmt->bindParam(':product_id', $product_id);
