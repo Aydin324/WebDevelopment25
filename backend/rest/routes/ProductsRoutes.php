@@ -308,6 +308,7 @@ Flight::route('DELETE /products/@id', function($id){
  *     )
  * )
  */
+//anyone can access this route
 Flight::route('GET /products/type/@type', function($type){
     try {
         $products = Flight::productsService()->getProductsByType($type);

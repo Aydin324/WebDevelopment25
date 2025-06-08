@@ -114,7 +114,6 @@ Flight::route('GET /reviews/rating/@rating', function($rating){
  */
 //reviews - create
 Flight::route('POST /reviews', function(){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     $data = Flight::request()->data->getData();
     Flight::json(Flight::reviewsService()->createReview($data));
 });

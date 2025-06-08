@@ -28,7 +28,7 @@ $(document).ready(function () {
   app.route({
     view: "reviews",
     load: "reviews.html",
-    onCreate: function () {},
+    onCreate: function () { ReviewService.init(); },
   });
   app.route({
     view: "login",
