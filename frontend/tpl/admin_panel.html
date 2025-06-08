@@ -5,219 +5,83 @@
       <h2 class="page-section-heading text-uppercase text-black">
         Admin Dashboard
       </h2>
-      <button class="btn btn-outline-danger" onclick="UserService.logout()">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
+      <div>
+        <button class="btn btn-outline-danger" onclick="UserService.logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
     </div>
     <div class="container d-flex justify-content-center subdescript">
       <p>Manage subscriptions, orders, and users</p>
     </div>
 
-    <!-- Quick Stats Cards (Bootstrap Grid) -->
-    <div class="container mt-5">
-      <div class="text-center mb-4">
-        <h2 class="page-section-heading text-uppercase text-black">Admin Dashboard</h2>
+    <!-- Quick Stats Cards -->
+    <div class="row mb-5">
+      <!-- Active Subscriptions -->
+      <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+          <div class="card-body text-center">
+            <h5 class="card-title">Active Subscriptions</h5>
+            <p class="display-6" id="active-subscriptions-count">0</p>
+          </div>
+        </div>
       </div>
-      <div class="row">
-        <!-- Card 1: Active Subscriptions -->
-        <div class="col-md-3 mb-4">
-          <div class="card stat-card bg-light">
-            <div class="card-body text-center">
-              <h5 class="card-title">Active Subscriptions</h5>
-              <p class="display-6">1,024</p>
-              <p class="text-success small">↑ 12% this month</p>
-            </div>
+      <!-- Pending Orders -->
+      <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+          <div class="card-body text-center">
+            <h5 class="card-title">Pending Orders</h5>
+            <p class="display-6" id="pending-orders-count">0</p>
           </div>
         </div>
-        <!-- Card 2: Monthly Revenue -->
-        <div class="col-md-3 mb-4">
-          <div class="card stat-card bg-light">
-            <div class="card-body text-center">
-              <h5 class="card-title">Monthly Revenue</h5>
-              <p class="display-6">24,599 BAM</p>
-              <p class="text-success small">↑ 8% from last month</p>
-            </div>
-          </div>
-        </div>
-        <!-- Card 3: Pending Orders -->
-        <div class="col-md-3 mb-4">
-          <div class="card stat-card bg-light">
-            <div class="card-body text-center">
-              <h5 class="card-title">Pending Orders</h5>
-              <p class="display-6">42</p>
-              <p class="text-danger small">5 urgent</p>
-            </div>
-          </div>
-        </div>
-        <!-- Card 4: Failed Payments -->
-        <div class="col-md-3 mb-4">
-          <div class="card stat-card bg-light">
-            <div class="card-body text-center">
-              <h5 class="card-title">Failed Payments</h5>
-              <p class="display-6">18</p>
-              <a href="#" class="small">Review now</a>
-            </div>
+      </div>
+      <!-- Total Revenue -->
+      <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+          <div class="card-body text-center">
+            <h5 class="card-title">Total Revenue</h5>
+            <p class="display-6" id="total-revenue">0.00 BAM</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Recent Subscriptions (Same style as user profile) -->
-    <div class="container mt-5">
-      <h2 class="mb-4">Recent Subscriptions</h2>
-      <div class="subscription">
-        <!-- Subscription 1 -->
-        <div class="row mb-4 align-items-center">
-          <div class="col-md-2">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Subscription Image"
-              class="img-fluid rounded"
-            />
-          </div>
-          <div class="col-md-6">
-            <h5 class="mb-1"><strong>Premium Coffee Subscription</strong></h5>
-            <p class="mb-1 text-muted">User: john@example.com</p>
-            <p class="mb-0">Renews on: <strong>2025-01-15</strong></p>
-          </div>
-          <div class="col-md-2">
-            <p class="mb-0 text-muted">49.99 BAM/month</p>
-          </div>
-          <div class="col-md-2 text-end">
-            <button class="btn btn-sm btn-outline-primary">Manage</button>
-          </div>
-        </div>
-        <!-- Subscription 2 -->
-        <div class="row mb-4 align-items-center">
-          <div class="col-md-2">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Subscription Image"
-              class="img-fluid rounded"
-            />
-          </div>
-          <div class="col-md-6">
-            <h5 class="mb-1"><strong>Basic Plan</strong></h5>
-            <p class="mb-1 text-muted">User: alice@example.com</p>
-            <p class="mb-0">
-              Payment failed: <strong class="text-danger">2025-01-02</strong>
-            </p>
-          </div>
-          <div class="col-md-2">
-            <p class="mb-0 text-muted">19.99 BAM/month</p>
-          </div>
-          <div class="col-md-2 text-end">
-            <button class="btn btn-sm btn-outline-danger">Retry</button>
-          </div>
-        </div>
+    <!-- Orders Section -->
+    <div class="card mb-5">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Recent Orders</h3>
+        <button class="btn btn-sm btn-outline-primary" id="refresh-orders">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+      <div class="card-body" id="orders-table">
+        <!-- Orders table will be loaded here -->
       </div>
     </div>
 
-    <!-- Recent Orders (Grid like user profile, but with admin actions) -->
-    <div class="container mt-5">
-      <h2 class="mb-4">Recent Orders</h2>
-      <div class="row">
-        <!-- Order 1 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Saccaria Decisio 1kg</strong></h5>
-              <p class="mb-2 text-muted">User: mike@example.com</p>
-              <p class="price">49.99 BAM</p>
-              <p class="text-muted small">
-                Status: <span class="text-warning">Processing</span>
-              </p>
-              <button class="btn btn-sm btn-primary w-100">
-                Mark as Shipped
-              </button>
-            </div>
-          </div>
-        </div>
-        <!-- Order 2 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>DeLonghi Machine</strong></h5>
-              <p class="mb-2 text-muted">User: sarah@example.com</p>
-              <p class="price">550.00 BAM</p>
-              <p class="text-muted small">
-                Status: <span class="text-success">Shipped</span>
-              </p>
-              <button class="btn btn-sm btn-outline-secondary w-100">
-                Tracking
-              </button>
-            </div>
-          </div>
-        </div>
-        <!-- Order 3 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Liquid Detergent 5l</strong></h5>
-              <p class="mb-2 text-muted">User: admin@example.com</p>
-              <p class="price">29.99 BAM</p>
-              <p class="text-muted small">
-                Status: <span class="text-danger">Refunded</span>
-              </p>
-              <button class="btn btn-sm btn-outline-dark w-100">
-                View Reason
-              </button>
-            </div>
-          </div>
-        </div>
+    <!-- Users Section -->
+    <div class="card mb-5">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Users</h3>
+        <button class="btn btn-sm btn-outline-primary" id="refresh-users">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+      <div class="card-body" id="users-table">
+        <!-- Users table will be loaded here -->
       </div>
     </div>
 
-    <!-- User Management Section -->
-    <div class="container mt-5">
-      <h2 class="mb-4">Recent Users</h2>
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Email</th>
-              <th>Joined</th>
-              <th>Subscriptions</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#42</td>
-              <td>john@example.com</td>
-              <td>2023-10-15</td>
-              <td>2 Active</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary">View</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#87</td>
-              <td>alice@example.com</td>
-              <td>2023-09-20</td>
-              <td>1 Failed</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary">View</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Subscriptions Section -->
+    <div class="card mb-5">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Active Subscriptions</h3>
+        <button class="btn btn-sm btn-outline-primary" id="refresh-subscriptions">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+      <div class="card-body" id="subscriptions-table">
+        <!-- Subscriptions table will be loaded here -->
       </div>
     </div>
   </div>

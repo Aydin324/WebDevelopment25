@@ -38,6 +38,18 @@ $(document).ready(function () {
   app.route({
     view: "admin_panel",
     load: "admin_panel.html",
+    onReady: function() {
+      if (!Utils.isAuthenticated()) {
+        window.location.hash = '#login';
+        return;
+      }
+      const payload = Utils.parseJwt(localStorage.getItem("user_token"));
+      if (!payload || payload.role !== 'admin') {
+        window.location.hash = '#home';
+        return;
+      }
+      AdminService.init();
+    }
   });
   app.route({
     view: "view_product",

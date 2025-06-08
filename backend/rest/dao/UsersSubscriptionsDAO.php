@@ -8,11 +8,17 @@ class UserSubscriptionsDAO extends BaseDAO {
 
     public function getUserSubscriptionsWithDetails($user_id) {
         try {
-            $query = "SELECT o.*, s.name, s.price, s.duration 
+            $query = "SELECT o.*, 
+                            s.name, 
+                            s.price, 
+                            s.duration,
+                            o.created_at as start_date,
+                            DATE_ADD(o.created_at, INTERVAL s.duration MONTH) as next_billing_date
                      FROM orders o
                      LEFT JOIN subscriptions s ON o.subscription_id = s.subscription_id
                      WHERE o.user_id = :user_id 
-                     AND o.order_type = 'subscription'";
+                     AND o.order_type = 'subscription'
+                     ORDER BY o.created_at DESC";
             
             error_log("Executing subscription query: " . $query);
             error_log("With user_id: " . $user_id);
@@ -32,12 +38,18 @@ class UserSubscriptionsDAO extends BaseDAO {
 
     public function getActiveSubscriptionsWithDetails($user_id) {
         try {
-            $query = "SELECT o.*, s.name, s.price, s.duration 
+            $query = "SELECT o.*, 
+                            s.name, 
+                            s.price, 
+                            s.duration,
+                            o.created_at as start_date,
+                            DATE_ADD(o.created_at, INTERVAL s.duration MONTH) as next_billing_date
                      FROM orders o
                      LEFT JOIN subscriptions s ON o.subscription_id = s.subscription_id
                      WHERE o.user_id = :user_id 
                      AND o.order_type = 'subscription'
-                     AND o.status = 'active'";
+                     AND o.status = 'active'
+                     ORDER BY o.created_at DESC";
             
             error_log("Executing active subscriptions query: " . $query);
             error_log("With user_id: " . $user_id);

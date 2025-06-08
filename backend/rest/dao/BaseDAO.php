@@ -42,7 +42,11 @@ class BaseDAO {
             }
             
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("Query result count: " . count($result));
+            error_log("Query returned " . count($result) . " rows");
+            if (!empty($result)) {
+                error_log("First row columns: " . implode(", ", array_keys($result[0])));
+                error_log("First row values: " . print_r($result[0], true));
+            }
             return $result;
         } catch (PDOException $e) {
             error_log("Database query error: " . $e->getMessage());

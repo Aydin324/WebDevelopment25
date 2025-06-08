@@ -31,19 +31,41 @@ var ProfileService = {
                 <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">${subscription.name || 'Subscription #' + subscription.subscription_id}</h5>
+                            <h5 class="card-title">${
+                              subscription.name ||
+                              "Subscription #" + subscription.subscription_id
+                            }</h5>
                             <p class="card-text">
-                                <small class="text-muted">Created: ${new Date(subscription.created_at).toLocaleDateString()}</small>
+                                <small class="text-muted">Started: ${new Date(
+                                  subscription.start_date
+                                ).toLocaleDateString()}</small>
                             </p>
                             <p class="card-text">
-                                <small class="text-muted">Last Updated: ${new Date(subscription.updated_at).toLocaleDateString()}</small>
+                                <small class="text-muted">Next billing: ${new Date(
+                                  subscription.next_billing_date
+                                ).toLocaleDateString()}</small>
                             </p>
-                            <p class="card-text">Quantity: ${subscription.quantity}</p>
-                            <p class="card-text">Total Price: $${subscription.total_price || 0}</p>
-                            <p class="card-text">Status: <span class="badge ${subscription.status === "active" ? "bg-success" : 
-                                                                           subscription.status === "pending" ? "bg-warning" : 
-                                                                           subscription.status === "completed" ? "bg-info" : "bg-secondary"
-                                                             }">${subscription.status}</span></p>
+                            <p class="card-text">Duration: ${
+                              subscription.duration
+                            } months</p>
+                            <p class="card-text">Quantity: ${
+                              subscription.quantity
+                            }</p>
+                            <p class="card-text">Price per unit: $${
+                              subscription.price || 0
+                            }</p>
+                            <p class="card-text">Total Price: $${
+                              subscription.total_price || 0
+                            }</p>
+                            <p class="card-text">Status: <span class="badge ${
+                              subscription.status === "active"
+                                ? "bg-success"
+                                : subscription.status === "pending"
+                                ? "bg-warning"
+                                : subscription.status === "completed"
+                                ? "bg-info"
+                                : "bg-secondary"
+                            }">${subscription.status}</span></p>
                         </div>
                     </div>
                 </div>
@@ -92,7 +114,6 @@ var ProfileService = {
                     `;
 
           result.forEach((order) => {
-            console.log(order);
             html += `
                             <tr>
                                 <td>#${order.order_id}</td>
@@ -100,9 +121,7 @@ var ProfileService = {
                                   order.created_at
                                 ).toLocaleDateString()}</td>
                                 <td>${order.order_type}</td>
-                                <td>${
-                                  order.product_name || order.subscription_name
-                                }</td>
+                                <td>${order.name || 'Unknown Item'}</td>
                                 <td>${order.quantity}</td>
                                 <td>$${order.total_price}</td>
                                 <td><span class="badge bg-${

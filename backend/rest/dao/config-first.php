@@ -17,7 +17,9 @@ class Database {
                     Config::DB_PASSWORD(),
                     [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::MYSQL_ATTR_FOUND_ROWS => true,
+                        PDO::ATTR_EMULATE_PREPARES => false // Ensure native prepared statements
                     ]
                 );
                 error_log("Database connection successful");

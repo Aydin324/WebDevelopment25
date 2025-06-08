@@ -2,7 +2,12 @@ var UserService = {
   init: function () {
     var token = localStorage.getItem("user_token");
     if (token && token !== undefined) {
-      UserService.loadPanel();
+      const payload = Utils.parseJwt(token);
+      if (payload && payload.role === 'admin') {
+        window.location.hash = '#admin_panel';
+      } else {
+        window.location.hash = '#view_profile';
+      }
     }
     UserService.updateNavigation();
 
@@ -11,7 +16,6 @@ var UserService = {
       submitHandler: function (form) {
         var entity = Object.fromEntries(new FormData(form).entries());
         console.log("Submitting login with entity:", entity);
-
         UserService.login(entity);
       },
     });
@@ -21,7 +25,6 @@ var UserService = {
       submitHandler: function (form) {
         var entity = Object.fromEntries(new FormData(form).entries());
         console.log("Submitting registration with entity:", entity);
-
         UserService.register(entity);
       },
     });
@@ -35,10 +38,19 @@ var UserService = {
       contentType: "application/json",
       dataType: "json",
       success: function (result) {
-        console.log(result);
+        console.log("Login response:", result);
         localStorage.setItem("user_token", result.data.token);
+        const payload = Utils.parseJwt(result.data.token);
+        console.log("Decoded payload:", payload);
         UserService.updateNavigation();
-        UserService.loadPanel();
+        
+        if (payload && payload.role === 'admin') {
+          console.log("Admin user detected, redirecting to admin panel");
+          window.location.hash = '#admin_panel';
+        } else {
+          console.log("Regular user detected, redirecting to profile");
+          window.location.hash = '#view_profile';
+        }
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         toastr.error(
@@ -79,18 +91,6 @@ var UserService = {
     window.location.hash = "#login";
   },
 
-  loadPanel: function () {
-    const payload = Utils.parseJwt(localStorage.getItem("user_token"));
-    const role = payload?.role;
-    if (role == "user") {
-      window.location.hash = "#view_profile";
-    } else if (role == "admin") {
-      window.location.hash = "#admin_panel";
-    } else {
-      console.log("Error in token decoding - Can't find role");
-    }
-  },
-
   updateNavigation: function () {
     const navLink = $("#nav-auth-link");
     const token = localStorage.getItem("user_token");
@@ -106,9 +106,9 @@ var UserService = {
       return;
     }
 
-    if (payload.role === "admin") {
+    if (payload.role === 'admin') {
       navLink.text("Admin Panel").attr("href", "#admin_panel");
-    } else if (payload.role === "user") {
+    } else {
       navLink.text("Profile").attr("href", "#view_profile");
     }
   },
