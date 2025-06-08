@@ -38,7 +38,7 @@ class OrdersService extends BaseService {
         $this->validateId($userId);
         
         try {
-            return $this->dao->getByUserId($userId) ?: [];
+            return $this->dao->getAllByParam('user_id', $userId) ?: [];
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to fetch user orders: " . $e->getMessage());
         }
@@ -127,5 +127,16 @@ class OrdersService extends BaseService {
         if (!in_array($type, self::VALID_ORDER_TYPES, true)) {
             throw new InvalidArgumentException("Invalid order type. Valid values: " . implode(', ', self::VALID_ORDER_TYPES));
         }
+    }
+
+    public function checkPurchaseHistory($user_id, $product_id) {
+        $query = "SELECT COUNT(*) as count FROM orders WHERE user_id = :user_id AND product_id = :product_id AND status = 'completed'";
+        $stmt = $this->dao->connection->prepare($query);
+        $stmt->execute([
+            ':user_id' => $user_id,
+            ':product_id' => $product_id
+        ]);
+        $result = $stmt->fetch();
+        return $result['count'] > 0;
     }
 }

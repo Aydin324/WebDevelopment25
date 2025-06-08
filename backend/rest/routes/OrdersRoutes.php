@@ -328,3 +328,46 @@ Flight::route('DELETE /orders/@id', function($id){
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::ordersService()->delete($id));
 });
+
+/**
+ * @OA\Get(
+ *     path="/orders/check-purchase",
+ *     summary="Check if user has purchased a specific product",
+ *     tags={"Orders"},
+ *     @OA\Parameter(
+ *         name="user_id",
+ *         in="query",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="product_id",
+ *         in="query",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Purchase check result",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="has_purchased", type="boolean")
+ *         )
+ *     )
+ * )
+ */
+Flight::route('GET /orders/check-purchase', function() {
+    $user_id = Flight::request()->query->user_id;
+    $product_id = Flight::request()->query->product_id;
+    
+    if (!$user_id || !$product_id) {
+        Flight::json(['error' => 'Missing parameters'], 400);
+        return;
+    }
+
+    try {
+        $result = Flight::ordersService()->checkPurchaseHistory($user_id, $product_id);
+        Flight::json(['has_purchased' => $result]);
+    } catch (Exception $e) {
+        Flight::json(['error' => $e->getMessage()], 500);
+    }
+});

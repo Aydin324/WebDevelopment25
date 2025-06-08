@@ -19,13 +19,7 @@ $(document).ready(function () {
       if (!Utils.isAuthenticated()) {
         return;  // isAuthenticated will handle the redirect
       }
-      
-      const user = Utils.getCurrentUser();
-      if (user && user.username) {
-        $("#h2").text("Hello " + user.username);
-      } else {
-        Utils.redirectToLogin();
-      }
+      ProfileService.init();
     },
   });
   app.route({

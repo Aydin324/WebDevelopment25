@@ -186,6 +186,25 @@ var ProductService = {
         "DeLonghi Dual Group – Eletta Explore.jpg",
     };
 
+    // Map products to their subscription IDs
+    const subscriptionMap = {
+      "DeLonghi Office - Dedica EC685": {
+        trial: 2,
+        monthly: 1,
+        unlimited: 11
+      },
+      "DeLonghi Single Group – La Specialista Prestigio": {
+        trial: 4,
+        monthly: 3,
+        unlimited: 12
+      },
+      "DeLonghi Dual Group – Eletta Explore": {
+        trial: 6,
+        monthly: 5,
+        unlimited: 13
+      }
+    };
+
     // Determine the image path
     let imagePath;
     if (imageMap[product.name]) {
@@ -201,20 +220,39 @@ var ProductService = {
     let html = `
             <div class="container mt-5">
                 <div class="row">
+                    <!-- Left Column: Image and Reviews -->
                     <div class="col-md-6">
-                        <div class="product-image-wrapper">
+                        <div class="product-image-wrapper mb-4">
                             <img src="${imagePath}" 
                                  alt="${product.type}" 
                                  class="img-fluid rounded"/>
                         </div>
+                        
+                        <!-- Reviews Section -->
+                        <div class="reviews-section">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4>Product Reviews</h4>
+                                <button class="btn btn-primary" onclick="ProductService.showReviewModal()">
+                                    Write a Review
+                                </button>
+                            </div>
+                            <div id="product-reviews" class="reviews-container">
+                                <!-- Reviews will be loaded here -->
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading reviews...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Right Column: Product Details -->
                     <div class="col-md-6">
                         <div class="product-details">
                             <h2 class="product-name mb-4">${product.name}</h2>
                             <div class="product-info mb-4">
-                                <p class="mb-2"><strong>Type:</strong> ${
-                                  product.type
-                                }</p>
+                                <p class="mb-2"><strong>Type:</strong> ${product.type}</p>
                                 ${
                                   product.weight
                                     ? `<p class="mb-2"><strong>Weight:</strong> ${product.weight}</p>`
@@ -370,8 +408,45 @@ var ProductService = {
             </div>`
                 : ""
             }
+
+            <!-- Review Modal -->
+            <div class="modal fade" id="reviewModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Write a Review</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="review-form">
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating">
+                                        <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label>
+                                        <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label>
+                                        <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label>
+                                        <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label>
+                                        <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Your Review</label>
+                                    <textarea class="form-control" id="review-comment" rows="3" required></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="ProductService.submitReview()">Submit Review</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `;
     $("#product-details-container").html(html);
+
+    // Load reviews for this product
+    ProductService.loadProductReviews(product.product_id);
 
     // Update quantity change handlers
     $(document).on("change", "#quantity", function () {
@@ -425,5 +500,133 @@ var ProductService = {
       document.getElementById("subscribeModal")
     );
     if (modal) modal.hide();
+  },
+
+  loadProductReviews: function(productId) {
+    console.log("Loading reviews for product ID:", productId);
+    $.ajax({
+      url: Constants.PROJECT_BASE_URL + "reviews/product/" + productId,
+      type: "GET",
+      success: function(result) {
+        console.log("Received reviews response:", result);
+        ProductService.displayReviews(result);
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        console.error("Error loading reviews:", {
+          status: XMLHttpRequest.status,
+          response: XMLHttpRequest.responseText,
+          error: errorThrown
+        });
+        toastr.error(XMLHttpRequest?.responseText || "Error loading reviews");
+      }
+    });
+  },
+
+  displayReviews: function(reviews) {
+    console.log("Displaying reviews:", reviews);
+    if (!reviews || !reviews.length) {
+      $("#product-reviews").html('<p class="text-muted">No reviews yet. Be the first to review this product!</p>');
+      return;
+    }
+
+    let html = '<div class="reviews-list">';
+    reviews.forEach(review => {
+      console.log("Processing review:", review);
+      const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+      html += `
+        <div class="review-card mb-3">
+          <div class="review-header">
+            <div class="rating-stars">${stars}</div>
+            <div class="review-date">${new Date(review.created_at).toLocaleDateString()}</div>
+          </div>
+          <div class="review-content">
+            <p class="review-text">${review.comment}</p>
+            <p class="reviewer-name text-muted">By ${review.username || 'Anonymous'}</p>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    console.log("Setting reviews HTML");
+    $("#product-reviews").html(html);
+  },
+
+  showReviewModal: function() {
+    if (!Utils.isAuthenticated()) {
+      window.location.hash = "#login";
+      return;
+    }
+    const reviewModal = new bootstrap.Modal(document.getElementById("reviewModal"));
+    reviewModal.show();
+  },
+
+  submitReview: function() {
+    if (!Utils.isAuthenticated()) {
+      window.location.hash = "#login";
+      return;
+    }
+
+    const rating = $('input[name="rating"]:checked').val();
+    const comment = $("#review-comment").val();
+    const user = Utils.getCurrentUser();
+    const selectedOption = $("#variant option:selected");
+    const productId = selectedOption.data("product-id");
+
+    if (!rating) {
+      toastr.error("Please select a rating");
+      return;
+    }
+
+    if (!comment) {
+      toastr.error("Please write a review comment");
+      return;
+    }
+
+    // First check if user has purchased this product
+    $.ajax({
+      url: Constants.PROJECT_BASE_URL + "orders/check-purchase",
+      type: "GET",
+      data: {
+        user_id: user.user_id,
+        product_id: productId
+      },
+      success: function(result) {
+        if (!result.has_purchased) {
+          toastr.error("You can only review products you have purchased");
+          return;
+        }
+
+        // If user has purchased, proceed with review submission
+        const reviewData = {
+          user_id: user.user_id,
+          product_id: productId,
+          rating: parseInt(rating),
+          comment: comment
+        };
+
+        $.ajax({
+          url: Constants.PROJECT_BASE_URL + "reviews",
+          type: "POST",
+          data: JSON.stringify(reviewData),
+          contentType: "application/json",
+          headers: {
+            Authentication: localStorage.getItem("user_token")
+          },
+          success: function(result) {
+            toastr.success("Review submitted successfully");
+            const modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
+            if (modal) modal.hide();
+            // Reload reviews
+            ProductService.loadProductReviews(productId);
+          },
+          error: function(XMLHttpRequest) {
+            toastr.error(XMLHttpRequest?.responseText || "Error submitting review");
+          }
+        });
+      },
+      error: function(XMLHttpRequest) {
+        toastr.error("Error checking purchase history");
+      }
+    });
   },
 };

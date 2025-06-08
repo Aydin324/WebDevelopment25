@@ -348,3 +348,107 @@ input[type="number"]::-webkit-outer-spin-button {
 #quantity {
   height: 38px; /* Match Bootstrap's default btn height */
 }
+
+/* Reviews Section */
+.reviews-container {
+  margin-top: 2rem;
+}
+
+.review-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.rating-stars {
+  color: var(--coffee-brew);
+  font-size: 1.2rem;
+}
+
+.review-date {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.review-content {
+  margin-top: 0.5rem;
+}
+
+.review-text {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.reviewer-name {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Rating Input in Modal */
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ddd;
+  margin: 0 2px;
+}
+
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input:checked ~ label {
+  color: var(--coffee-brew);
+}
+
+/* Subscription Info */
+.subscription-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.subscription-plans {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.plan .badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.plan-id {
+  font-size: 0.8rem;
+  color: #666;
+}

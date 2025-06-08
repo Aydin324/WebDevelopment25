@@ -43,13 +43,15 @@ Flight::before('start', function(&$params, &$output) {
     error_log("Global middleware - Received request to: " . $currentPath);
     
     // Public routes that don't need authentication
-     if(
+    if(
         strpos($currentPath, '/auth/login') === 0 ||
         strpos($currentPath, '/auth/register') === 0 ||
         // Product routes - all GET requests are public
         (strpos($currentPath, '/products') === 0 && $request->method === 'GET') ||
         // Review routes - all GET requests are public
-        (strpos($currentPath, '/reviews') === 0 && $request->method === 'GET')
+        (strpos($currentPath, '/reviews') === 0 && $request->method === 'GET') ||
+        // Reviews by product - public
+        (strpos($currentPath, '/reviews/product/') === 0 && $request->method === 'GET')
     ) {
         error_log("Accessing public route - no auth needed");
         return true;

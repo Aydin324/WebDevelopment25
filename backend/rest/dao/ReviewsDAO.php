@@ -28,10 +28,14 @@ class ReviewsDAO extends BaseDAO {
     }
 
     public function getByProductId($product_id) {
-        $stmt = $this->connection->prepare("SELECT * FROM reviews WHERE product_id = :product_id");
-        $stmt->bindParam(':product_id', $product_id);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        return $this->query(
+            "SELECT r.*, u.username 
+             FROM reviews r 
+             LEFT JOIN users u ON r.user_id = u.user_id 
+             WHERE r.product_id = :product_id
+             ORDER BY r.created_at DESC",
+            [':product_id' => $product_id]
+        );
     }
 
     public function getByRating($rating) {
