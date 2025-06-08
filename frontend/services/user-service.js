@@ -73,7 +73,7 @@ var UserService = {
 
   logout: function () {
     localStorage.clear();
-    window.location.replace("login.html");
+    window.location.hash = "#login";
   },
 
   loadPanel: function () {
