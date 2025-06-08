@@ -11,7 +11,7 @@ class BaseDAO {
         'reviews' => 'review_id',
         'subscriptions' => 'subscription_id',
         'payments' => 'payment_id',
-        'users_ubscriptions' => 'user_subscription_id',
+        'users_subscriptions' => 'user_subscription_id',
         'users' => 'user_id',
     ];
 
@@ -121,6 +121,16 @@ class BaseDAO {
         $stmt = $this->connection->prepare($sql);
         $data['id'] = $id;
         return $stmt->execute($data);
+    }
+
+    public function updateStatus($id, $status) {
+        $primaryKey = $this->getPrimaryKey();
+        $sql = "UPDATE " . $this->table . " SET status = :status WHERE " . $primaryKey . " = :id";
+        $stmt = $this->connection->prepare($sql);
+        return $stmt->execute([
+            'id' => $id,
+            'status' => $status
+        ]);
     }
 
     public function delete($id) {

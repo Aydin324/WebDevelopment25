@@ -7,18 +7,23 @@ class UsersSubscriptionsService extends BaseService {
     protected $dao;
     
     public function __construct() {
-        parent::__construct('orders');
         $this->dao = new UserSubscriptionsDAO();
+        $this->table = 'users_subscriptions';
     }
 
-    //core methods    
+    public function getAll(): array {
+        try {
+            return $this->dao->getAll() ?: [];
+        } catch (PDOException $e) {
+            throw new RuntimeException("Failed to fetch subscriptions: " . $e->getMessage());
+        }
+    }
 
     public function createUserSubscription(array $subscriptionData): int {
         $this->validateSubscriptionData($subscriptionData);
         
         // Set default status if not provided
         $subscriptionData['status'] = $subscriptionData['status'] ?? 'pending';
-        $subscriptionData['order_type'] = 'subscription';
         
         try {
             return $this->dao->insert($subscriptionData);
@@ -50,13 +55,8 @@ class UsersSubscriptionsService extends BaseService {
     public function updateStatus(int $subscriptionId, string $newStatus): bool {
         $this->validateStatus($newStatus);
         
-        $updateData = [
-            'status' => $newStatus,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        
         try {
-            return (bool) $this->dao->update($subscriptionId, $updateData);
+            return $this->dao->updateStatus($subscriptionId, $newStatus);
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to update subscription status");
         }

@@ -85,6 +85,18 @@ Flight::before('start', function(&$params, &$output) {
     }
 });
 
+// Register error handler
+Flight::map('error', function(Exception $ex){
+    error_log("Error occurred: " . $ex->getMessage());
+    error_log("Stack trace: " . $ex->getTraceAsString());
+    
+    $code = ($ex instanceof PDOException) ? 500 : 400;
+    Flight::json([
+        'status' => 'error',
+        'message' => $ex->getMessage()
+    ], $code);
+});
+
 error_log("Routes configured, starting Flight...");
 Flight::start();  // Start FlightPHP
 ?>

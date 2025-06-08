@@ -329,3 +329,32 @@ Flight::route('DELETE /user-subscriptions/@id', function($id){
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     Flight::json(Flight::usersSubscriptionsService()->delete($id));
 });
+
+/**
+ * @OA\Get(
+ *     path="/user-subscriptions",
+ *     summary="Get all user subscriptions (admin only)",
+ *     tags={"User Subscriptions"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of all user subscriptions",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/UserSubscription")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - Admin access required"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Failed to fetch subscriptions"
+ *     )
+ * )
+ */
+//user subscriptions - get all (admin only)
+Flight::route('GET /user-subscriptions', function(){
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    Flight::json(Flight::usersSubscriptionsService()->getAll());
+});

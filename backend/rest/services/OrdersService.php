@@ -1,13 +1,16 @@
 <?php
 
 require_once 'BaseService.php';
+require_once __DIR__ . '/../dao/OrdersDAO.php';
 
 class OrdersService extends BaseService {
     private const VALID_STATUSES = ['pending', 'completed', 'cancelled'];
     private const VALID_ORDER_TYPES = ['subscription', 'product'];
+    protected $dao;
     
     public function __construct() {
-        parent::__construct('orders');
+        $this->dao = new OrdersDAO();
+        $this->table = 'orders';
     }
 
     public function getByStatus(string $status): array {
@@ -38,7 +41,7 @@ class OrdersService extends BaseService {
         $this->validateId($userId);
         
         try {
-            return $this->dao->getAllByParam('user_id', $userId) ?: [];
+            return $this->dao->getByUserId($userId) ?: [];
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to fetch user orders: " . $e->getMessage());
         }

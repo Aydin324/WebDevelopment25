@@ -45,43 +45,15 @@ var AdminService = {
             }
         });
 
-        // First get all users
+        // Load subscription stats
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + 'users',
+            url: Constants.PROJECT_BASE_URL + 'user-subscriptions',
             type: 'GET',
             headers: { 'Authentication': localStorage.getItem('user_token') },
-            success: function(users) {
-                if (!users) return;
-                
-                // Then get subscriptions for each user
-                let activeSubscriptionsCount = 0;
-                let loadedUsers = 0;
-                
-                users.forEach(user => {
-                    $.ajax({
-                        url: Constants.PROJECT_BASE_URL + 'users/' + user.user_id + '/subscriptions',
-                        type: 'GET',
-                        headers: { 'Authentication': localStorage.getItem('user_token') },
-                        success: function(subs) {
-                            if (subs) {
-                                activeSubscriptionsCount += subs.filter(s => s.status === 'active').length;
-                            }
-                            loadedUsers++;
-                            
-                            // Update count when all users are processed
-                            if (loadedUsers === users.length) {
-                                $('#active-subscriptions-count').text(activeSubscriptionsCount);
-                            }
-                        },
-                        error: function() {
-                            loadedUsers++;
-                            // Still update if all users are processed
-                            if (loadedUsers === users.length) {
-                                $('#active-subscriptions-count').text(activeSubscriptionsCount);
-                            }
-                        }
-                    });
-                });
+            success: function(subs) {
+                if (!subs) return;
+                const activeSubscriptions = subs.filter(s => s.status === 'active').length || 0;
+                $('#active-subscriptions-count').text(activeSubscriptions);
             },
             error: function(xhr) {
                 toastr.error('Error loading subscription statistics');
@@ -115,7 +87,7 @@ var AdminService = {
                     html += `
                         <tr>
                             <td>#${order.order_id}</td>
-                            <td>${order.user_id}</td>
+                            <td>${order.username || order.user_id}</td>
                             <td>${order.name || 'Unknown Item'}</td>
                             <td>${order.total_price} BAM</td>
                             <td>
@@ -139,6 +111,7 @@ var AdminService = {
             },
             error: function(xhr) {
                 toastr.error('Error loading orders');
+                $('#orders-table').html('<div class="alert alert-danger">Error loading orders data</div>');
             }
         });
     },
@@ -157,7 +130,6 @@ var AdminService = {
                             <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -170,11 +142,6 @@ var AdminService = {
                             <td>${user.username}</td>
                             <td>${user.email}</td>
                             <td>${user.role}</td>
-                            <td>
-                                <span class="badge bg-${user.status === 'active' ? 'success' : 'danger'}">
-                                    ${user.status}
-                                </span>
-                            </td>
                         </tr>
                     `;
                 });
@@ -184,94 +151,66 @@ var AdminService = {
             },
             error: function(xhr) {
                 toastr.error('Error loading users');
+                $('#users-table').html('<div class="alert alert-danger">Error loading users data</div>');
             }
         });
     },
 
     loadSubscriptions: function() {
-        // First get all users
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + 'users',
+            url: Constants.PROJECT_BASE_URL + 'user-subscriptions',
             type: 'GET',
             headers: { 'Authentication': localStorage.getItem('user_token') },
-            success: function(users) {
-                if (!users) {
-                    $('#subscriptions-table').html('<div class="alert alert-warning">No users found</div>');
+            success: function(subscriptions) {
+                if (!subscriptions || subscriptions.length === 0) {
+                    $('#subscriptions-table').html('<div class="alert alert-warning">No subscriptions found</div>');
                     return;
                 }
-                
-                let allSubscriptions = [];
-                let loadedUsers = 0;
-                
-                // Get subscriptions for each user
-                users.forEach(user => {
-                    $.ajax({
-                        url: Constants.PROJECT_BASE_URL + 'users/' + user.user_id + '/subscriptions',
-                        type: 'GET',
-                        headers: { 'Authentication': localStorage.getItem('user_token') },
-                        success: function(subs) {
-                            if (subs) {
-                                // Add user info to each subscription
-                                subs.forEach(sub => {
-                                    sub.username = user.username;
-                                    allSubscriptions.push(sub);
-                                });
-                            }
-                            loadedUsers++;
-                            
-                            // Render table when all users are processed
-                            if (loadedUsers === users.length) {
-                                let html = '<div class="table-responsive"><table class="table table-hover">';
-                                html += `
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>User</th>
-                                            <th>Plan</th>
-                                            <th>Start Date</th>
-                                            <th>Next Billing</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                `;
 
-                                allSubscriptions.forEach(sub => {
-                                    html += `
-                                        <tr>
-                                            <td>#${sub.subscription_id}</td>
-                                            <td>${sub.username}</td>
-                                            <td>${sub.name || 'Unknown Plan'}</td>
-                                            <td>${new Date(sub.start_date).toLocaleDateString()}</td>
-                                            <td>${new Date(sub.next_billing_date).toLocaleDateString()}</td>
-                                            <td>
-                                                <span class="badge bg-${sub.status === 'active' ? 'success' : 
-                                                                      sub.status === 'pending' ? 'warning' : 'danger'}">
-                                                    ${sub.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    `;
-                                });
+                let html = '<div class="table-responsive"><table class="table table-hover">';
+                html += `
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Plan</th>
+                            <th>Start Date</th>
+                            <th>Next Billing</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
 
-                                html += '</tbody></table></div>';
-                                $('#subscriptions-table').html(html);
-                            }
-                        },
-                        error: function() {
-                            loadedUsers++;
-                            // Still try to render if all users are processed
-                            if (loadedUsers === users.length) {
-                                if (allSubscriptions.length === 0) {
-                                    $('#subscriptions-table').html('<div class="alert alert-warning">No subscriptions found</div>');
-                                }
-                            }
-                        }
-                    });
+                const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
+                if (activeSubscriptions.length === 0) {
+                    $('#subscriptions-table').html('<div class="alert alert-warning">No active subscriptions found</div>');
+                    return;
+                }
+
+                activeSubscriptions.forEach(sub => {
+                    const startDate = sub.start_date ? new Date(sub.start_date).toLocaleDateString() : 'N/A';
+                    const nextBillingDate = sub.next_billing_date ? new Date(sub.next_billing_date).toLocaleDateString() : 'N/A';
+                    
+                    html += `
+                        <tr>
+                            <td>#${sub.user_subscription_id || sub.subscription_id}</td>
+                            <td>${sub.username || sub.user_id}</td>
+                            <td>${sub.name || 'Unknown Plan'}</td>
+                            <td>${startDate}</td>
+                            <td>${nextBillingDate}</td>
+                            <td>
+                                <span class="badge bg-success">Active</span>
+                            </td>
+                        </tr>
+                    `;
                 });
+
+                html += '</tbody></table></div>';
+                $('#subscriptions-table').html(html);
             },
             error: function(xhr) {
-                toastr.error('Error loading users');
+                toastr.error('Error loading subscriptions');
                 $('#subscriptions-table').html('<div class="alert alert-danger">Error loading subscription data</div>');
             }
         });
