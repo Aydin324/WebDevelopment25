@@ -15,7 +15,7 @@ class BaseService {
         try {
             $results = $this->dao->getAll();
             if($this->table=="users"){
-                $results = array_map(function($user){
+                $results = array_map(function($user){   
                     unset($user['password_hash']);
                     return $user;
                 }, $results);

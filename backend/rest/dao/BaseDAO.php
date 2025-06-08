@@ -11,7 +11,7 @@ class BaseDAO {
         'reviews' => 'review_id',
         'subscriptions' => 'subscription_id',
         'payments' => 'payment_id',
-        'users_subscriptions' => 'user_subscription_id',
+        'users_ubscriptions' => 'user_subscription_id',
         'users' => 'user_id',
     ];
 
@@ -21,14 +21,40 @@ class BaseDAO {
     }
 
     //helper functions
-    protected function query($query, $params)
+    public function query($query, $params)
     {
-        $stmt = $this->connection->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            error_log("BaseDAO executing query: " . $query);
+            error_log("With parameters: " . print_r($params, true));
+            
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                $error = $this->connection->errorInfo();
+                error_log("Prepare failed: " . print_r($error, true));
+                throw new PDOException("Prepare failed: " . $error[2]);
+            }
+            
+            $success = $stmt->execute($params);
+            if (!$success) {
+                $error = $stmt->errorInfo();
+                error_log("Execute failed: " . print_r($error, true));
+                throw new PDOException("Execute failed: " . $error[2]);
+            }
+            
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Query result count: " . count($result));
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Database query error: " . $e->getMessage());
+            error_log("Error code: " . $e->getCode());
+            if (isset($stmt)) {
+                error_log("SQL state: " . print_r($stmt->errorInfo(), true));
+            }
+            throw new PDOException("Database query failed: " . $e->getMessage());
+        }
     }
 
-    protected function query_unique($query, $params)
+    public function query_unique($query, $params)
     {
         $results = $this->query($query, $params);
         return reset($results);

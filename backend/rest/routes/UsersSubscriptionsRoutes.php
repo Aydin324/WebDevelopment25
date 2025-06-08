@@ -10,7 +10,7 @@ Flight::register('usersSubscriptionsService', 'UsersSubscriptionsService');
  *     summary="Get user's subscriptions",
  *     tags={"User Subscriptions"},
  *     @OA\Parameter(
- *         name="user_id",
+ *         name="user_id", 
  *         in="path",
  *         required=true,
  *         description="User ID",

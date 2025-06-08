@@ -28,31 +28,26 @@ var ProfileService = {
         if (result && result.length > 0) {
           result.forEach((subscription) => {
             html += `
-                            <div class="col-md-6 mb-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${
-                                          subscription.name
-                                        }</h5>
-                                        <p class="card-text">
-                                            <small class="text-muted">Started: ${new Date(
-                                              subscription.start_date
-                                            ).toLocaleDateString()}</small>
-                                        </p>
-                                        <p class="card-text">
-                                            <small class="text-muted">Next billing: ${new Date(
-                                              subscription.next_billing_date
-                                            ).toLocaleDateString()}</small>
-                                        </p>
-                                        <p class="card-text">Status: <span class="badge bg-${
-                                          subscription.status === "active"
-                                            ? "success"
-                                            : "warning"
-                                        }">${subscription.status}</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${subscription.name || 'Subscription #' + subscription.subscription_id}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">Created: ${new Date(subscription.created_at).toLocaleDateString()}</small>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">Last Updated: ${new Date(subscription.updated_at).toLocaleDateString()}</small>
+                            </p>
+                            <p class="card-text">Quantity: ${subscription.quantity}</p>
+                            <p class="card-text">Total Price: $${subscription.total_price || 0}</p>
+                            <p class="card-text">Status: <span class="badge ${subscription.status === "active" ? "bg-success" : 
+                                                                           subscription.status === "pending" ? "bg-warning" : 
+                                                                           subscription.status === "completed" ? "bg-info" : "bg-secondary"
+                                                             }">${subscription.status}</span></p>
+                        </div>
+                    </div>
+                </div>
+            `;
           });
         } else {
           html =
@@ -97,6 +92,7 @@ var ProfileService = {
                     `;
 
           result.forEach((order) => {
+            console.log(order);
             html += `
                             <tr>
                                 <td>#${order.order_id}</td>
@@ -124,6 +120,7 @@ var ProfileService = {
         } else {
           html = '<p class="text-muted">No orders found</p>';
         }
+
         $("#order-history").html(html);
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
