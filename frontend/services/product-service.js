@@ -47,6 +47,9 @@ var ProductService = {
       url: Constants.PROJECT_BASE_URL + "products",
       type: "GET",
       contentType: "application/json",
+      headers: {
+        Authentication: localStorage.getItem("user_token"),
+      },
       success: function (result) {
         ProductService.displayProducts(result.data);
       },
@@ -65,6 +68,9 @@ var ProductService = {
       url: Constants.PROJECT_BASE_URL + "products/category/" + categoryId,
       type: "GET",
       contentType: "application/json",
+      headers: {
+        Authentication: localStorage.getItem("user_token"),
+      },
       success: function (result) {
         ProductService.displayProducts(result.data);
       },
@@ -87,6 +93,9 @@ var ProductService = {
         encodeURIComponent(type),
       type: "GET",
       contentType: "application/json",
+      headers: {
+        Authentication: localStorage.getItem("user_token"),
+      },
       success: function (result) {
         console.log("Received products:", result);
         if (result.data && result.data.length > 0) {
@@ -113,6 +122,9 @@ var ProductService = {
       url: Constants.PROJECT_BASE_URL + "products/" + productId,
       type: "GET",
       contentType: "application/json",
+      headers: {
+        Authentication: localStorage.getItem("user_token"),
+      },
       success: function (result) {
         if (result.data) {
           // Get all products of the same type to populate variants
@@ -164,16 +176,35 @@ var ProductService = {
 
   displayProductDetails: function (product, allProductsOfType) {
     console.log("Displaying product:", product);
+
+    // Map product names to their image files
+    const imageMap = {
+      "DeLonghi Office - Dedica EC685": "DeLonghi Office - Dedica EC685.jpg",
+      "DeLonghi Single Group – La Specialista Prestigio":
+        "DeLonghi Single Group – La Specialista Prestigio.jpg",
+      "DeLonghi Dual Group – Eletta Explore":
+        "DeLonghi Dual Group – Eletta Explore.jpg",
+    };
+
+    // Determine the image path
+    let imagePath;
+    if (imageMap[product.name]) {
+      imagePath = `assets/img/products-images/${imageMap[product.name]}`;
+    } else if (product.type === "Coffee Machine") {
+      imagePath = "assets/img/products-images/coffee-machine-3-group.jpg";
+    } else {
+      imagePath = `assets/img/products-images/${product.type
+        .toLowerCase()
+        .replace(" ", "-")}.jpg`;
+    }
+
     let html = `
             <div class="container mt-5">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="product-image-wrapper">
-                            <img src="${
-                              product.image_url ||
-                              "../assets/img/products-images/default-product.jpg"
-                            }" 
-                                 alt="${product.name}" 
+                            <img src="${imagePath}" 
+                                 alt="${product.type}" 
                                  class="img-fluid rounded"/>
                         </div>
                     </div>
@@ -254,14 +285,145 @@ var ProductService = {
                                 <p class="text-muted small">Free Shipping</p>
                             </div>
                             <div class="product-actions">
-                                <button class="btn btn-primary btn-lg me-3">Add to Cart</button>
-                                <button class="btn btn-outline-secondary btn-lg">Buy Now</button>
+                                <button class="btn btn-primary btn-lg me-3" onclick="ProductService.showBuyModal()">Buy Now</button>
+                                ${
+                                  OrderService.isSubscribable(product.name)
+                                    ? `<button class="btn btn-outline-secondary btn-lg" onclick="ProductService.showSubscribeModal()">Subscribe</button>`
+                                    : ""
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Buy Now Modal -->
+            <div class="modal fade" id="buyModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Purchase</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Please confirm your purchase of <span id="modal-quantity">1</span> unit(s) of ${
+                              product.name
+                            }.</p>
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method</label>
+                                <select class="form-control" id="payment-method">
+                                    <option value="cash">Cash</option>
+                                    <option value="credit_card">Credit Card</option>
+                                </select>
+                            </div>
+                            <p class="total-price">Total: $<span id="modal-total">${
+                              product.price
+                            }</span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="ProductService.confirmPurchase()">Confirm Purchase</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscribe Modal -->
+            ${
+              OrderService.isSubscribable(product.name)
+                ? `
+            <div class="modal fade" id="subscribeModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Choose Subscription Plan</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="subscription-options">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="subscriptionType" id="trial" value="trial" checked>
+                                    <label class="form-check-label" for="trial">
+                                        Trial Period
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="subscriptionType" id="monthly" value="monthly">
+                                    <label class="form-check-label" for="monthly">
+                                        Monthly Subscription
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="subscriptionType" id="unlimited" value="unlimited">
+                                    <label class="form-check-label" for="unlimited">
+                                        Unlimited Access
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="ProductService.confirmSubscription()">Request Subscription</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`
+                : ""
+            }
         `;
     $("#product-details-container").html(html);
+
+    // Update quantity change handlers
+    $(document).on("change", "#quantity", function () {
+      const price = parseFloat(product.price);
+      const quantity = parseInt($(this).val());
+      $("#modal-quantity").text(quantity);
+      $("#modal-total").text((price * quantity).toFixed(2));
+    });
+  },
+
+  showBuyModal: function () {
+    if (!Utils.isAuthenticated()) {
+      window.location.hash = "#login";
+      return;
+    }
+    const buyModal = new bootstrap.Modal(document.getElementById("buyModal"));
+    buyModal.show();
+  },
+
+  showSubscribeModal: function () {
+    if (!Utils.isAuthenticated()) {
+      window.location.hash = "#login";
+      return;
+    }
+    const subscribeModal = new bootstrap.Modal(
+      document.getElementById("subscribeModal")
+    );
+    subscribeModal.show();
+  },
+
+  confirmPurchase: function () {
+    const selectedOption = $("#variant option:selected");
+    const productId = selectedOption.data("product-id");
+    const quantity = parseInt($("#quantity").val());
+    const paymentMethod = $("#payment-method").val();
+
+    OrderService.placeOrder(productId, quantity, paymentMethod);
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("buyModal")
+    );
+    if (modal) modal.hide();
+  },
+
+  confirmSubscription: function () {
+    const selectedOption = $("#variant option:selected");
+    const productId = selectedOption.data("product-id");
+    const subscriptionType = $("input[name='subscriptionType']:checked").val();
+
+    OrderService.requestSubscription(productId, subscriptionType);
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("subscribeModal")
+    );
+    if (modal) modal.hide();
   },
 };

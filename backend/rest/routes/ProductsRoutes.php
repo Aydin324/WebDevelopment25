@@ -25,7 +25,6 @@ Flight::register('productsService', 'ProductsService');
  */
 //products - get all
 Flight::route('GET /products', function(){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->getAll());
 });
 
@@ -62,7 +61,6 @@ Flight::route('GET /products', function(){
  */
 //products - get single
 Flight::route('GET /products/@id', function($id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->getById($id));
 });
 
@@ -98,7 +96,6 @@ Flight::route('GET /products/@id', function($id){
  */
 //products - search by name
 Flight::route('GET /products/search/@name', function($name){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::productsService()->searchByName($name));
 });
 
@@ -308,11 +305,10 @@ Flight::route('DELETE /products/@id', function($id){
  *     )
  * )
  */
-//anyone can access this route
+//products - get by type
 Flight::route('GET /products/type/@type', function($type){
     try {
-        $products = Flight::productsService()->getProductsByType($type);
-        Flight::json(['data' => $products]);
+        Flight::json(Flight::productsService()->getProductsByType($type));
     } catch (Exception $e) {
         Flight::json(['error' => $e->getMessage()], 500);
     }

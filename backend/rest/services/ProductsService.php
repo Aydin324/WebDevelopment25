@@ -8,7 +8,8 @@ class ProductsService extends BaseService {
 
     public function getProductsByType($type) {
         try {
-            return $this->dao->getAllByParam('type', $type);
+            $products = $this->dao->getAllByParam('type', $type);
+            return ['data' => $products];
         } catch (Exception $e) {
             throw new Exception("Error fetching products by type: " . $e->getMessage());
         }

@@ -16,12 +16,15 @@ $(document).ready(function () {
     view: "view_profile",
     load: "view_profile.html",
     onReady: function () {
-      const token = localStorage.getItem("user_token");
-      if (token) {
-        const payload = Utils.parseJwt(token);
-        if (payload && payload.user && payload.user.username) {
-          $("#h2").text("Hello " + payload.user.username);
-        }
+      if (!Utils.isAuthenticated()) {
+        return;  // isAuthenticated will handle the redirect
+      }
+      
+      const user = Utils.getCurrentUser();
+      if (user && user.username) {
+        $("#h2").text("Hello " + user.username);
+      } else {
+        Utils.redirectToLogin();
       }
     },
   });

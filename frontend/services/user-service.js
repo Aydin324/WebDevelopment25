@@ -4,6 +4,7 @@ var UserService = {
     if (token && token !== undefined) {
       UserService.loadPanel();
     }
+    UserService.updateNavigation();
 
     // Login form validation and submit handler
     $("#login-form").validate({
@@ -36,6 +37,7 @@ var UserService = {
       success: function (result) {
         console.log(result);
         localStorage.setItem("user_token", result.data.token);
+        UserService.updateNavigation();
         UserService.loadPanel();
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -73,6 +75,7 @@ var UserService = {
 
   logout: function () {
     localStorage.clear();
+    UserService.updateNavigation();
     window.location.hash = "#login";
   },
 
@@ -85,6 +88,28 @@ var UserService = {
       window.location.hash = "#admin_panel";
     } else {
       console.log("Error in token decoding - Can't find role");
+    }
+  },
+
+  updateNavigation: function () {
+    const navLink = $("#nav-auth-link");
+    const token = localStorage.getItem("user_token");
+    
+    if (!token) {
+      navLink.text("Login").attr("href", "#login");
+      return;
+    }
+
+    const payload = Utils.parseJwt(token);
+    if (!payload || !payload.role) {
+      navLink.text("Login").attr("href", "#login");
+      return;
+    }
+
+    if (payload.role === "admin") {
+      navLink.text("Admin Panel").attr("href", "#admin_panel");
+    } else if (payload.role === "user") {
+      navLink.text("Profile").attr("href", "#view_profile");
     }
   },
 };

@@ -14,7 +14,16 @@ class OrdersDAO extends BaseDAO {
     }
 
     public function updateStatus($order_id, $status) {
-        $stmt = $this->connection->prepare("UPDATE orders SET status = :status WHERE id = :id");
+        $stmt = $this->connection->prepare("UPDATE orders SET status = :status WHERE order_id = :id");
         return $stmt->execute([':status' => $status, ':id' => $order_id]);
+    }
+
+    public function insert($data) {
+        $columns = implode(", ", array_keys($data));
+        $placeholders = ":" . implode(", :", array_keys($data));
+        $sql = "INSERT INTO " . $this->table . " ($columns) VALUES ($placeholders)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute($data);
+        return $this->connection->lastInsertId();
     }
 }

@@ -48,6 +48,43 @@ class OrdersService extends BaseService {
     public function createOrder(array $orderData): int {
         $this->validateOrderData($orderData);
         
+        // Set default values if not provided
+        if (!isset($orderData['status'])) {
+            $orderData['status'] = 'pending';
+        }
+
+        // Ensure quantity is set and valid
+        if (!isset($orderData['quantity']) || !is_numeric($orderData['quantity']) || $orderData['quantity'] < 1) {
+            $orderData['quantity'] = 1; // Default to 1 if not set or invalid
+        }
+
+        // Handle product orders
+        if ($orderData['order_type'] === 'product' && !isset($orderData['total_price'])) {
+            try {
+                $product = Flight::productsService()->getById($orderData['product_id']);
+                if ($product) {
+                    $orderData['total_price'] = $product['price'] * $orderData['quantity'];
+                }
+            } catch (PDOException $e) {
+                throw new RuntimeException("Failed to get product price: " . $e->getMessage());
+            }
+        }
+
+        // Handle subscription orders
+        if ($orderData['order_type'] === 'subscription') {
+            try {
+                $subscription = Flight::subscriptionsService()->getById($orderData['subscription_id']);
+                if ($subscription) {
+                    // For trial subscriptions (IDs 2,4,6,8,10), price should be 0
+                    $trialIds = [2,4,6,8,10];
+                    $basePrice = in_array($orderData['subscription_id'], $trialIds) ? 0 : $subscription['price'];
+                    $orderData['total_price'] = $basePrice * $orderData['quantity'];
+                }
+            } catch (PDOException $e) {
+                throw new RuntimeException("Failed to get subscription price: " . $e->getMessage());
+            }
+        }
+        
         try {
             return $this->dao->insert($orderData);
         } catch (PDOException $e) {
@@ -57,37 +94,25 @@ class OrdersService extends BaseService {
 
     //validation methods    
     private function validateOrderData(array $data): void {
-        $requiredFields = [
-            'user_id', 
-            'order_type', 
-            'total_price', 
-            'status'
-        ];
-        
+        $requiredFields = ['user_id', 'order_type', 'status'];
         foreach ($requiredFields as $field) {
-            if (!isset($data[$field]) || $data[$field] === '') {
+            if (empty($data[$field])) {
                 throw new InvalidArgumentException("$field is required");
             }
         }
 
-        //numeric fields validation
-        foreach (['user_id', 'quantity', 'total_price'] as $field) {
-            if (isset($data[$field]) && !is_numeric($data[$field])) {
-                throw new InvalidArgumentException("$field must be numeric");
+        $this->validateOrderType($data['order_type']);
+        $this->validateStatus($data['status']);
+
+        // Product order validation
+        if ($data['order_type'] === 'product') {
+            if (empty($data['product_id'])) {
+                throw new InvalidArgumentException("product_id is required for product orders");
             }
         }
 
-        //nalidate against enum-like values
-        if (isset($data['order_type'])) {
-            $this->validateOrderType($data['order_type']);
-        }
-        
-        if (isset($data['status'])) {
-            $this->validateStatus($data['status']);
-        }
-
-        //subscription-specific validation
-        if ($data['order_type'] === 'subscription' && empty($data['subscription_id'])) {
+        // Subscription order validation
+        if ($data['order_type'] === 'subscription' && !isset($data['subscription_id'])) {
             throw new InvalidArgumentException("subscription_id is required for subscription orders");
         }
     }

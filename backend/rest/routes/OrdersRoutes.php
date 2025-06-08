@@ -139,9 +139,21 @@ Flight::route('GET /orders/status/@status', function($status){
  */
 //orders - create
 Flight::route('POST /orders', function(){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
-    $data = Flight::request()->data->getData();
-    Flight::json(Flight::ordersService()->createOrder($data));
+    error_log("Processing POST /orders request");
+    error_log("Current role from Flight: " . (Flight::get('role') ?? 'null'));
+    error_log("Current user from Flight: " . print_r(Flight::get('user'), true));
+    
+    try {
+        Flight::auth_middleware()->authorizeRole(Roles::USER);
+        $data = Flight::request()->data->getData();
+        error_log("Order data received: " . print_r($data, true));
+        $orderId = Flight::ordersService()->createOrder($data);
+        Flight::json(['order_id' => $orderId]);
+    } catch (Exception $e) {
+        error_log("Error in POST /orders: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        Flight::halt(500, "Order creation failed: " . $e->getMessage());
+    }
 });
 
 /**

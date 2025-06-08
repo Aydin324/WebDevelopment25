@@ -66,7 +66,6 @@ Flight::route('GET /reviews', function(){
  */
 //reviews - get by product
 Flight::route('GET /reviews/product/@product_id', function($product_id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByProductId($product_id));
 });
 
@@ -102,7 +101,6 @@ Flight::route('GET /reviews/product/@product_id', function($product_id){
  */
 //reviews - get by rating
 Flight::route('GET /reviews/rating/@rating', function($rating){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByRating($rating));
 });
 
@@ -182,7 +180,6 @@ Flight::route('POST /reviews', function(){
  */
 //reviews - get single
 Flight::route('GET /reviews/@id', function($id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getById($id));
 });
 
