@@ -7,111 +7,67 @@ Flight::register('usersSubscriptionsService', 'UsersSubscriptionsService');
 /**
  * @OA\Get(
  *     path="/users/{user_id}/subscriptions",
- *     summary="Get user's subscriptions",
- *     tags={"User Subscriptions"},
+ *     summary="Get all subscriptions for a user",
+ *     tags={"Users Subscriptions"},
  *     @OA\Parameter(
- *         name="user_id", 
+ *         name="user_id",
  *         in="path",
  *         required=true,
- *         description="User ID",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="List of user's subscriptions",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/UserSubscription")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Invalid user ID"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Failed to fetch subscriptions"
+ *         description="List of user's subscriptions"
  *     )
  * )
  */
-//user subscriptions - get by user
-Flight::route('GET /users/@user_id/subscriptions', function($user_id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
+Flight::route('GET /users/@user_id/subscriptions', function($user_id) {
     Flight::json(Flight::usersSubscriptionsService()->getByUserId($user_id));
 });
 
 /**
  * @OA\Get(
  *     path="/users/{user_id}/subscriptions/active",
- *     summary="Get user's active subscriptions",
- *     tags={"User Subscriptions"},
+ *     summary="Get active subscriptions for a user",
+ *     tags={"Users Subscriptions"},
  *     @OA\Parameter(
  *         name="user_id",
  *         in="path",
  *         required=true,
- *         description="User ID",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="List of user's active subscriptions",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/UserSubscription")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Invalid user ID"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Failed to fetch subscriptions"
+ *         description="List of user's active subscriptions"
  *     )
  * )
  */
-//user subscriptions - get active
-Flight::route('GET /users/@user_id/subscriptions/active', function($user_id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
+Flight::route('GET /users/@user_id/subscriptions/active', function($user_id) {
     Flight::json(Flight::usersSubscriptionsService()->getActiveSubscriptions($user_id));
 });
 
 /**
  * @OA\Post(
- *     path="/user-subscriptions",
- *     summary="Create a user subscription",
- *     tags={"User Subscriptions"},
+ *     path="/users/subscriptions",
+ *     summary="Create a new user subscription",
+ *     tags={"Users Subscriptions"},
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"user_id","subscription_id","start_date"},
- *             @OA\Property(property="user_id", type="integer", example=1),
- *             @OA\Property(property="subscription_id", type="integer", example=1),
- *             @OA\Property(property="start_date", type="string", format="date", example="2023-01-01"),
- *             @OA\Property(property="end_date", type="string", format="date", example="2023-12-31"),
- *             @OA\Property(property="status", type="string", enum={"active","expired","cancelled"}, example="active")
+ *             required={"user_id", "subscription_id"},
+ *             @OA\Property(property="user_id", type="integer"),
+ *             @OA\Property(property="subscription_id", type="integer"),
+ *             @OA\Property(property="quantity", type="integer"),
+ *             @OA\Property(property="status", type="string")
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Subscription created successfully",
- *         @OA\JsonContent(
- *             @OA\Property(property="id", type="integer", example=1)
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Invalid input"
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Subscription creation failed"
+ *         description="Subscription created successfully"
  *     )
  * )
  */
-//user subscriptions - create
-Flight::route('POST /user-subscriptions', function(){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
+Flight::route('POST /users/subscriptions', function() {
     $data = Flight::request()->data->getData();
     Flight::json(Flight::usersSubscriptionsService()->createUserSubscription($data));
 });

@@ -99,4 +99,14 @@ Flight::map('error', function(Exception $ex){
 
 error_log("Routes configured, starting Flight...");
 Flight::start();  // Start FlightPHP
+
+// Register services
+Flight::register('usersService', 'UsersService');
+Flight::register('ordersService', 'OrdersService');
+Flight::register('paymentsService', 'PaymentsService');
+Flight::register('productsService', 'ProductsService');
+Flight::register('reviewsService', 'ReviewsService');
+Flight::register('subscriptionsService', 'SubscriptionsService');
+Flight::register('usersSubscriptionsService', 'UsersSubscriptionsService');
+Flight::register('authService', 'AuthService');
 ?>

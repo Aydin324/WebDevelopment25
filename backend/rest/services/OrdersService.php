@@ -27,12 +27,63 @@ class OrdersService extends BaseService {
         $this->validateStatus($newStatus);
         
         try {
-            $result = $this->dao->updateStatus($orderId, $newStatus);
-            if ($result === false) {
-                throw new RuntimeException("Order update failed or order doesn't exist");
+            // Get order details first
+            $order = $this->dao->getById($orderId);
+            error_log("Order details for ID $orderId: " . print_r($order, true));
+            
+            if (!$order) {
+                throw new RuntimeException("Order not found");
             }
+
+            // Update order status
+            $result = $this->dao->updateStatus($orderId, $newStatus);
+            error_log("Order status update result: " . ($result ? "success" : "failed"));
+            
+            if ($result === false) {
+                throw new RuntimeException("Order update failed");
+            }
+
+            // If this is a subscription order being completed, create a user subscription
+            error_log("Checking if should create subscription - Status: " . $newStatus . ", Order type: " . $order['order_type']);
+            
+            if ($newStatus === 'completed' && $order['order_type'] === 'subscription') {
+                error_log("Creating user subscription for completed subscription order");
+                
+                try {
+                    // First check if subscription already exists
+                    $existingSubscriptions = Flight::usersSubscriptionsService()->getActiveSubscriptions($order['user_id']);
+                    error_log("Existing active subscriptions: " . print_r($existingSubscriptions, true));
+                    
+                    $subscriptionData = [
+                        'user_id' => $order['user_id'],
+                        'subscription_id' => $order['subscription_id'],
+                        'quantity' => $order['quantity'],
+                        'status' => 'active',
+                        'created_at' => date('Y-m-d H:i:s')
+                    ];
+                    
+                    error_log("Subscription data to insert: " . print_r($subscriptionData, true));
+                    
+                    $subscriptionResult = Flight::usersSubscriptionsService()->createUserSubscription($subscriptionData);
+                    error_log("User subscription creation result: " . print_r($subscriptionResult, true));
+                    
+                    if (!$subscriptionResult) {
+                        error_log("Failed to create user subscription - no error thrown but result is false/null");
+                        throw new RuntimeException("Failed to create user subscription");
+                    }
+                } catch (Exception $e) {
+                    error_log("Failed to create user subscription: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                    throw $e;
+                }
+            } else {
+                error_log("Not creating subscription - Status: " . $newStatus . ", Order type: " . $order['order_type']);
+            }
+
             return $result;
         } catch (PDOException $e) {
+            error_log("Database error in updateStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             throw new RuntimeException("Database error updating order");
         }
     }
@@ -130,16 +181,5 @@ class OrdersService extends BaseService {
         if (!in_array($type, self::VALID_ORDER_TYPES, true)) {
             throw new InvalidArgumentException("Invalid order type. Valid values: " . implode(', ', self::VALID_ORDER_TYPES));
         }
-    }
-
-    public function checkPurchaseHistory($user_id, $product_id) {
-        $query = "SELECT COUNT(*) as count FROM orders WHERE user_id = :user_id AND product_id = :product_id AND status = 'completed'";
-        $stmt = $this->dao->connection->prepare($query);
-        $stmt->execute([
-            ':user_id' => $user_id,
-            ':product_id' => $product_id
-        ]);
-        $result = $stmt->fetch();
-        return $result['count'] > 0;
     }
 }

@@ -582,50 +582,31 @@ var ProductService = {
       return;
     }
 
-    // First check if user has purchased this product
+    // Submit review directly without checking purchase
+    const reviewData = {
+      user_id: user.user_id,
+      product_id: productId,
+      rating: parseInt(rating),
+      comment: comment
+    };
+
     $.ajax({
-      url: Constants.PROJECT_BASE_URL + "orders/check-purchase",
-      type: "GET",
-      data: {
-        user_id: user.user_id,
-        product_id: productId
+      url: Constants.PROJECT_BASE_URL + "reviews",
+      type: "POST",
+      data: JSON.stringify(reviewData),
+      contentType: "application/json",
+      headers: {
+        Authentication: localStorage.getItem("user_token")
       },
       success: function(result) {
-        if (!result.has_purchased) {
-          toastr.error("You can only review products you have purchased");
-          return;
-        }
-
-        // If user has purchased, proceed with review submission
-        const reviewData = {
-          user_id: user.user_id,
-          product_id: productId,
-          rating: parseInt(rating),
-          comment: comment
-        };
-
-        $.ajax({
-          url: Constants.PROJECT_BASE_URL + "reviews",
-          type: "POST",
-          data: JSON.stringify(reviewData),
-          contentType: "application/json",
-          headers: {
-            Authentication: localStorage.getItem("user_token")
-          },
-          success: function(result) {
-            toastr.success("Review submitted successfully");
-            const modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
-            if (modal) modal.hide();
-            // Reload reviews
-            ProductService.loadProductReviews(productId);
-          },
-          error: function(XMLHttpRequest) {
-            toastr.error(XMLHttpRequest?.responseText || "Error submitting review");
-          }
-        });
+        toastr.success("Review submitted successfully");
+        const modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
+        if (modal) modal.hide();
+        // Reload reviews
+        ProductService.loadProductReviews(productId);
       },
       error: function(XMLHttpRequest) {
-        toastr.error("Error checking purchase history");
+        toastr.error(XMLHttpRequest?.responseText || "Error submitting review");
       }
     });
   },

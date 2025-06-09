@@ -37,7 +37,7 @@ var ProfileService = {
                             }</h5>
                             <p class="card-text">
                                 <small class="text-muted">Started: ${new Date(
-                                  subscription.start_date
+                                  subscription.created_at
                                 ).toLocaleDateString()}</small>
                             </p>
                             <p class="card-text">
@@ -49,13 +49,13 @@ var ProfileService = {
                               subscription.duration
                             } months</p>
                             <p class="card-text">Quantity: ${
-                              subscription.quantity
+                              subscription.quantity || 1
                             }</p>
                             <p class="card-text">Price per unit: $${
                               subscription.price || 0
                             }</p>
                             <p class="card-text">Total Price: $${
-                              subscription.total_price || 0
+                              (subscription.price || 0) * (subscription.quantity || 1)
                             }</p>
                             <p class="card-text">Status: <span class="badge ${
                               subscription.status === "active"
@@ -73,7 +73,7 @@ var ProfileService = {
           });
         } else {
           html =
-            '<div class="col-12"><p class="text-muted">No active subscriptions</p></div>';
+            '<div class="col-12"><p class="text-muted">No subscriptions found</p></div>';
         }
         $("#active-subscriptions").html(html);
       },
@@ -151,3 +151,4 @@ var ProfileService = {
     });
   },
 };
+ 

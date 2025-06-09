@@ -1,7 +1,7 @@
 <?php
 require_once 'BaseDAO.php';
 
-class UserSubscriptionsDAO extends BaseDAO {
+class UsersSubscriptionsDAO extends BaseDAO {
     public function __construct() {
         parent::__construct('users_subscriptions');
     }
@@ -96,5 +96,34 @@ class UserSubscriptionsDAO extends BaseDAO {
     public function updateStatus($subscription_id, $status) {
         $stmt = $this->connection->prepare("UPDATE users_subscriptions SET status = :status WHERE user_subscription_id = :id");
         return $stmt->execute([':status' => $status, ':id' => $subscription_id]);
+    }
+
+    public function insert($data) {
+        try {
+            error_log("Attempting to insert user subscription with data: " . print_r($data, true));
+            
+            $columns = implode(", ", array_keys($data));
+            $placeholders = ":" . implode(", :", array_keys($data));
+            $sql = "INSERT INTO " . $this->table . " ($columns) VALUES ($placeholders)";
+            
+            error_log("SQL Query: " . $sql);
+            error_log("With parameters: " . print_r($data, true));
+            
+            $stmt = $this->connection->prepare($sql);
+            $result = $stmt->execute($data);
+            
+            if ($result) {
+                $id = $this->connection->lastInsertId();
+                error_log("Successfully inserted user subscription with ID: " . $id);
+                return $id;
+            } else {
+                error_log("Failed to insert user subscription. Error info: " . print_r($stmt->errorInfo(), true));
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("PDO Exception in insert: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
+        }
     }
 }

@@ -7,7 +7,7 @@ class UsersSubscriptionsService extends BaseService {
     protected $dao;
     
     public function __construct() {
-        $this->dao = new UserSubscriptionsDAO();
+        $this->dao = new UsersSubscriptionsDAO();
         $this->table = 'users_subscriptions';
     }
 
@@ -19,16 +19,40 @@ class UsersSubscriptionsService extends BaseService {
         }
     }
 
-    public function createUserSubscription(array $subscriptionData): int {
-        $this->validateSubscriptionData($subscriptionData);
-        
-        // Set default status if not provided
-        $subscriptionData['status'] = $subscriptionData['status'] ?? 'pending';
+    public function createUserSubscription($data) {
+        error_log("UsersSubscriptionsService: Creating user subscription with data: " . print_r($data, true));
         
         try {
-            return $this->dao->insert($subscriptionData);
-        } catch (PDOException $e) {
-            throw new RuntimeException("Failed to create user subscription: " . $e->getMessage());
+            // Validate required fields
+            if (!isset($data['user_id']) || !isset($data['subscription_id'])) {
+                error_log("UsersSubscriptionsService: Missing required fields");
+                throw new InvalidArgumentException("user_id and subscription_id are required");
+            }
+
+            // Set default status if not provided
+            if (!isset($data['status'])) {
+                $data['status'] = 'active';
+            }
+
+            // Set default quantity if not provided
+            if (!isset($data['quantity'])) {
+                $data['quantity'] = 1;
+            }
+
+            // Set created_at if not provided
+            if (!isset($data['created_at'])) {
+                $data['created_at'] = date('Y-m-d H:i:s');
+            }
+
+            error_log("UsersSubscriptionsService: Attempting to insert with validated data");
+            $result = $this->dao->insert($data);
+            error_log("UsersSubscriptionsService: Insert result: " . ($result ? "success with ID: $result" : "failed"));
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log("UsersSubscriptionsService Error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
         }
     }
 
