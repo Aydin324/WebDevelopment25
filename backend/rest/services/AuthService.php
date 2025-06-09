@@ -34,10 +34,11 @@ class AuthService extends BaseService {
     $entity['password_hash'] = password_hash($entity['password'], PASSWORD_BCRYPT);
     unset($entity['password']);  
 
-    $entity['role'] = 'user';  
+    $entity['role'] = Roles::USER;  // Use the constant from Roles class
     $entity['created_at'] = date('Y-m-d H:i:s');  
     $entity['updated_at'] = date('Y-m-d H:i:s');  
 
+    error_log("Registering new user with role: " . $entity['role']);
     $result = parent::insert($entity);
 
     if (!$result) {
@@ -50,30 +51,36 @@ class AuthService extends BaseService {
 
 
    public function login($entity) {  
+       error_log("Login attempt for email: " . $entity['email']);
+       
        if (empty($entity['email']) || empty($entity['password'])) {
+           error_log("Login failed: Email or password missing");
            return ['success' => false, 'error' => 'Email and password are required.'];
        }
 
-
        $user = $this->auth_dao->get_user_by_email($entity['email']);
        if(!$user){
+           error_log("Login failed: User not found");
            return ['success' => false, 'error' => 'Invalid username or password.'];
        }
 
+       error_log("Found user: " . print_r($user, true));
 
-       if(!$user || !password_verify($entity['password'], $user['password_hash']))
+       if(!$user || !password_verify($entity['password'], $user['password_hash'])) {
+           error_log("Login failed: Password verification failed");
            return ['success' => false, 'error' => 'Invalid username or password.'];
-
+       }
 
        unset($user['password']);
       
        $jwt_payload = [
             'user' => $user,
-            'role' => $user['role'],       // Explicitly include role at top level ← IMPORTANT
+            'role' => $user['role'],       // Explicitly include role at top level
             'iat' => time(),
             'exp' => time() + (60 * 15) // valid for 15 minutes
        ];
 
+       error_log("Creating JWT with payload: " . print_r($jwt_payload, true));
 
        $token = JWT::encode(
            $jwt_payload,
@@ -81,7 +88,7 @@ class AuthService extends BaseService {
            'HS256'
        );
 
-
+       error_log("Login successful, token created");
        return ['success' => true, 'data' => array_merge($user, ['token' => $token])];             
    }
 }

@@ -1,6 +1,8 @@
 <?php
 
-class Roles{
-    const ADMIN = "admin";
-    const USER = "user";
+if (!class_exists('Roles')) {
+    class Roles {
+        const ADMIN = "admin";
+        const USER = "user";
+    }
 }

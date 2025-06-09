@@ -1,25 +1,58 @@
 <?php
 require_once 'BaseService.php';
+require_once __DIR__ . '/../dao/UsersSubscriptionsDAO.php';
 
-class UserSubscriptionsService extends BaseService {
-    private const VALID_STATUSES = ['active', 'expired', 'cancelled'];
+class UsersSubscriptionsService extends BaseService {
+    private const VALID_STATUSES = ['active', 'pending', 'completed', 'cancelled'];
+    protected $dao;
     
     public function __construct() {
-        parent::__construct('user_subscriptions');
+        $this->dao = new UsersSubscriptionsDAO();
+        $this->table = 'users_subscriptions';
     }
 
-    //core methods    
+    public function getAll(): array {
+        try {
+            return $this->dao->getAll() ?: [];
+        } catch (PDOException $e) {
+            throw new RuntimeException("Failed to fetch subscriptions: " . $e->getMessage());
+        }
+    }
 
-    public function createUserSubscription(array $subscriptionData): int {
-        $this->validateSubscriptionData($subscriptionData);
-        
-        // Set default status if not provided
-        $subscriptionData['status'] = $subscriptionData['status'] ?? 'pending';
+    public function createUserSubscription($data) {
+        error_log("UsersSubscriptionsService: Creating user subscription with data: " . print_r($data, true));
         
         try {
-            return $this->dao->insert($subscriptionData);
-        } catch (PDOException $e) {
-            throw new RuntimeException("Failed to create user subscription: " . $e->getMessage());
+            // Validate required fields
+            if (!isset($data['user_id']) || !isset($data['subscription_id'])) {
+                error_log("UsersSubscriptionsService: Missing required fields");
+                throw new InvalidArgumentException("user_id and subscription_id are required");
+            }
+
+            // Set default status if not provided
+            if (!isset($data['status'])) {
+                $data['status'] = 'active';
+            }
+
+            // Set default quantity if not provided
+            if (!isset($data['quantity'])) {
+                $data['quantity'] = 1;
+            }
+
+            // Set created_at if not provided
+            if (!isset($data['created_at'])) {
+                $data['created_at'] = date('Y-m-d H:i:s');
+            }
+
+            error_log("UsersSubscriptionsService: Attempting to insert with validated data");
+            $result = $this->dao->insert($data);
+            error_log("UsersSubscriptionsService: Insert result: " . ($result ? "success with ID: $result" : "failed"));
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log("UsersSubscriptionsService Error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
         }
     }
 
@@ -27,7 +60,7 @@ class UserSubscriptionsService extends BaseService {
         $this->validateId($userId);
         
         try {
-            return $this->dao->getByUserId($userId) ?: [];
+            return $this->dao->getUserSubscriptionsWithDetails($userId) ?: [];
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to fetch user subscriptions");
         }
@@ -37,7 +70,7 @@ class UserSubscriptionsService extends BaseService {
         $this->validateId($userId);
         
         try {
-            return $this->dao->getActiveSubscriptions($userId) ?: [];
+            return $this->dao->getActiveSubscriptionsWithDetails($userId) ?: [];
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to fetch active subscriptions");
         }
@@ -46,13 +79,8 @@ class UserSubscriptionsService extends BaseService {
     public function updateStatus(int $subscriptionId, string $newStatus): bool {
         $this->validateStatus($newStatus);
         
-        $updateData = [
-            'status' => $newStatus,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        
         try {
-            return (bool) $this->dao->update($subscriptionId, $updateData);
+            return $this->dao->updateStatus($subscriptionId, $newStatus);
         } catch (PDOException $e) {
             throw new RuntimeException("Failed to update subscription status");
         }
@@ -61,9 +89,9 @@ class UserSubscriptionsService extends BaseService {
     //validation
     
     private function validateSubscriptionData(array $data): void {
-        $requiredFields = ['user_id', 'subscription_id', 'start_date'];
+        $requiredFields = ['user_id', 'subscription_id', 'quantity'];
         foreach ($requiredFields as $field) {
-            if (empty($data[$field])) {
+            if (!isset($data[$field])) {
                 throw new InvalidArgumentException("$field is required");
             }
         }
@@ -73,15 +101,6 @@ class UserSubscriptionsService extends BaseService {
             if (!is_numeric($data[$field])) {
                 throw new InvalidArgumentException("$field must be numeric");
             }
-        }
-
-        // Date validation
-        if (isset($data['start_date']) && !strtotime($data['start_date'])) {
-            throw new InvalidArgumentException("Invalid start date format");
-        }
-
-        if (isset($data['end_date']) && !strtotime($data['end_date'])) {
-            throw new InvalidArgumentException("Invalid end date format");
         }
 
         // Status validation
@@ -98,17 +117,22 @@ class UserSubscriptionsService extends BaseService {
         }
     }
 
+    protected function validateId($id): void {
+        if (!is_numeric($id) || $id <= 0) {
+            throw new InvalidArgumentException("Invalid ID format");
+        }
+    }
+
     //business logic
         
     public function isSubscriptionActive(int $subscriptionId): bool {
-        $subscription = $this->getById($subscriptionId);
+        $subscription = $this->dao->getById($subscriptionId);
         
         if (!$subscription) {
             throw new RuntimeException("Subscription not found");
         }
 
-        return $subscription['status'] === 'active' && 
-               (empty($subscription['end_date']) || strtotime($subscription['end_date']) > time());
+        return $subscription['status'] === 'active';
     }
 
     public function cancelSubscription(int $subscriptionId): bool {

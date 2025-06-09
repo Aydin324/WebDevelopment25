@@ -1,148 +1,43 @@
 <section class="page-section">
   <div class="container">
-    <h2
-      class="page-section-heading text-center text-uppercase text-black"
-      id="h2"
-    ></h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="page-section-heading text-uppercase text-black" id="h2"></h2>
+      <button class="btn btn-outline-danger" onclick="UserService.logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
     <div class="container d-flex justify-content-center subdescript">
       <p>Check out your active subscriptions and past orders</p>
     </div>
     <!-- Subscriptions Section -->
     <div class="container mt-5">
-      <h2 class="mb-4">Current Subscriptions</h2>
-      <div class="subscription">
-        <!-- Subscription 1 -->
-        <div class="row mb-4 align-items-center">
-          <div class="col-md-2">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Subscription Image"
-              class="img-fluid rounded"
-            />
-          </div>
-          <div class="col-md-8">
-            <h5 class="mb-1"><strong>Premium Coffee Subscription</strong></h5>
-            <p class="mb-1 text-muted">Binding: 2025</p>
-            <p class="mb-0">
-              Enjoy freshly roasted coffee delivered to your door every month.
-            </p>
-          </div>
-          <div class="col-md-2 text-end">
-            <p class="text-muted">2023-10-15</p>
-          </div>
-        </div>
-        <!-- Subscription 2 -->
-        <div class="row mb-4 align-items-center">
-          <div class="col-md-2">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Subscription Image"
-              class="img-fluid rounded"
-            />
-          </div>
-          <div class="col-md-8">
-            <h5 class="mb-1"><strong>3-group Coffee Machine</strong></h5>
-            <p class="mb-1 text-muted">Binding: Not Specified</p>
-            <p class="mb-0">
-              Premium Italian coffee machine for best customer experience.
-            </p>
-          </div>
-          <div class="col-md-2 text-end">
-            <p class="text-muted">2023-09-20</p>
+      <h2 class="text-center mb-4" id="h2">User Profile</h2>
+
+      <!-- Active Subscriptions Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h3 class="mb-3">Active Subscriptions</h3>
+          <div id="active-subscriptions" class="row">
+            <!-- Will be populated by JavaScript -->
+            <div class="text-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading subscriptions...</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Past Orders Section -->
-    <div class="container mt-5">
-      <h2 class="mb-4">Past Orders</h2>
+      <!-- Order History Section -->
       <div class="row">
-        <!-- Order 1 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Saccaria Decisio 1kg</strong></h5>
-              <p class="mb-2 text-muted">Decisio coffee grounds by Saccaria</p>
-              <p class="price">49.99 BAM</p>
-              <p class="text-muted small">2023-08-10</p>
-            </div>
-          </div>
-        </div>
-        <!-- Order 2 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Saccaria Decisio 1kg</strong></h5>
-              <p class="mb-2 text-muted">Decisio coffee grounds by Saccaria</p>
-              <p class="price">49.99 BAM</p>
-              <p class="text-muted small">2023-07-25</p>
-            </div>
-          </div>
-        </div>
-        <!-- Order 3 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2">
-                <strong>DeLonghi Single Group Coffee Machine</strong>
-              </h5>
-              <p class="mb-2 text-muted">
-                High-quality machine for personal use.
-              </p>
-              <p class="price">550.00 BAM</p>
-              <p class="text-muted small">2023-06-15</p>
-            </div>
-          </div>
-        </div>
-        <!-- Order 4 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Liquid Detergent 5l</strong></h5>
-              <p class="mb-2 text-muted">
-                Premium eco-friendly liquid detergent.
-              </p>
-              <p class="price">29.99 BAM</p>
-              <p class="text-muted small">2023-05-12</p>
-            </div>
-          </div>
-        </div>
-        <!-- Order 5 -->
-        <div class="col-md-4 mb-4">
-          <div class="order-box">
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Product Image"
-              class="img-fluid rounded-top"
-            />
-            <div class="p-3">
-              <h5 class="mb-2"><strong>Dish Shine 2l</strong></h5>
-              <p class="mb-2 text-muted">
-                Eco-friendly and appropriate for sensitive dishes.
-              </p>
-              <p class="price">19.99 BAM</p>
-              <p class="text-muted small">2023-04-08</p>
+        <div class="col-12">
+          <h3 class="mb-3">Order History</h3>
+          <div id="order-history">
+            <!-- Will be populated by JavaScript -->
+            <div class="text-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading orders...</span>
+              </div>
             </div>
           </div>
         </div>

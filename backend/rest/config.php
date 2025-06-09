@@ -2,10 +2,15 @@
 
 class Config
 {
+    private static function is_production() {
+        return isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost';
+    }
 
     public static function DB_HOST()
     {
-        return Config::get_env('DB_HOST', 'database-web-do-user-23068801-0.e.db.ondigitalocean.com');
+        return self::is_production() 
+            ? 'database-web-do-user-23068801-0.e.db.ondigitalocean.com'
+            : 'localhost';
     }
 
     public static function DB_SCHEME()
@@ -15,17 +20,23 @@ class Config
 
     public static function DB_USERNAME()
     {
-        return Config::get_env('DB_USERNAME', 'doadmin');
+        return self::is_production() 
+            ? 'doadmin'
+            : 'root';
     }
 
     public static function DB_PASSWORD()
     {
-        return Config::get_env('DB_PASSWORD', 'AVNS_d09-jvxLlZx5NociUec');
+        return self::is_production() 
+            ? 'AVNS_d09-jvxLlZx5NociUec'
+            : '';
     }
 
     public static function DB_PORT()
     {
-        return Config::get_env('DB_PORT', '25060');
+        return self::is_production() 
+            ? '25060'
+            : '3306';
     }
 
     public static function JWT_SECRET()
@@ -62,5 +73,4 @@ class Config
     {
         return isset($_ENV[$name]) && trim($_ENV[$name]) != '' ? $_ENV[$name] : $default;
     }
-
 }

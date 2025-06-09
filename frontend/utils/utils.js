@@ -13,27 +13,38 @@ var Utils = window.Utils || {
     },
     isAuthenticated: function() {
         const token = localStorage.getItem("user_token");
-        if (!token) return false;
+        if (!token) {
+            Utils.redirectToLogin();
+            return false;
+        }
 
         const decoded = Utils.parseJwt(token);
-        if (!decoded) return false;
+        if (!decoded) {
+            Utils.redirectToLogin();
+            return false;
+        }
 
         const currentTime = Date.now() / 1000;
-        return decoded.exp > currentTime;
+        if (decoded.exp <= currentTime) {
+            Utils.logout(); // Clear token and redirect
+            return false;
+        }
+
+        return true;
     },
     getCurrentUser: function() {
         if (!Utils.isAuthenticated()) return null;
         
-        const userData = localStorage.getItem("user_token");
-        return userData ? JSON.parse(userData) : null;
+        const decoded = Utils.parseJwt(localStorage.getItem("user_token"));
+        return decoded ? decoded.user : null;
     },
     hasRole: function(role) {
-        const user = Utils.getCurrentUser();
-        return user && user.role === role;
+        const decoded = Utils.parseJwt(localStorage.getItem("user_token"));
+        return decoded && decoded.role === role;
     },
     hasAnyRole: function(roles) {
-        const user = Utils.getCurrentUser();
-        return user && roles.includes(user.role);
+        const decoded = Utils.parseJwt(localStorage.getItem("user_token"));
+        return decoded && roles.includes(decoded.role);
     },
     hasPermission: function(permission) {
         const user = Utils.getCurrentUser();
@@ -42,16 +53,19 @@ var Utils = window.Utils || {
     logout: function() {
         // Clear all auth data
         localStorage.removeItem("user_token");
-        localStorage.removeItem("user_token");
         
         // Force redirect to login page
-        window.location.replace(window.location.pathname + '#register_login');
+        window.location.hash = "#login";
     },
     showError: function(message) {
         toastr.error(message || 'An error occurred');
     },
     showSuccess: function(message) {
         toastr.success(message);
+    },
+    redirectToLogin: function() {
+        localStorage.removeItem("user_token");
+        window.location.hash = "#login";
     }
 };
 

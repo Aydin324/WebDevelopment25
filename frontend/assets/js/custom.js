@@ -9,24 +9,23 @@ $(document).ready(function () {
     onCreate: function () {},
     onReady: function () {},
   });
-  app.route({ view: "products", load: "products.html" });
+  app.route({ view: "products", load: "products.html", onReady: function() {
+    ProductService.init();
+  } });
   app.route({
     view: "view_profile",
     load: "view_profile.html",
     onReady: function () {
-      const token = localStorage.getItem("user_token");
-      if (token) {
-        const payload = Utils.parseJwt(token);
-        if (payload && payload.user && payload.user.username) {
-          $("#h2").text("Hello " + payload.user.username);
-        }
+      if (!Utils.isAuthenticated()) {
+        return;  // isAuthenticated will handle the redirect
       }
+      ProfileService.init();
     },
   });
   app.route({
     view: "reviews",
     load: "reviews.html",
-    onCreate: function () {},
+    onCreate: function () { ReviewService.init(); },
   });
   app.route({
     view: "login",
@@ -39,18 +38,32 @@ $(document).ready(function () {
   app.route({
     view: "admin_panel",
     load: "admin_panel.html",
+    onReady: function() {
+      if (!Utils.isAuthenticated()) {
+        window.location.hash = '#login';
+        return;
+      }
+      const payload = Utils.parseJwt(localStorage.getItem("user_token"));
+      if (!payload || payload.role !== 'admin') {
+        window.location.hash = '#home';
+        return;
+      }
+      AdminService.init();
+    }
   });
   app.route({
     view: "view_product",
     load: "view_product.html",
+    onReady: function() {
+      const selectedType = sessionStorage.getItem('selected_product_type');
+      if (selectedType) {
+        ProductService.loadProductsByType(selectedType);
+      }
+    }
   });
 
   // run app
   app.run();
-
-  $("main#spapp").on("click", ".portfolio-item", function () {
-    window.location.hash = "#view_product"; // Update the URL hash
-  });
 
   $(document).on("click", "#decrement-qty", function () {
     const input = $("#quantity");

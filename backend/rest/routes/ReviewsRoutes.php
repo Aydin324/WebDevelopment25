@@ -6,6 +6,36 @@ Flight::register('reviewsService', 'ReviewsService');
 
 /**
  * @OA\Get(
+ *     path="/reviews",
+ *     summary="Get all reviews",
+ *     tags={"Reviews"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of all reviews",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/Review")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Failed to fetch reviews"
+ *     )
+ * )
+ */
+//reviews - get all
+Flight::route('GET /reviews', function(){
+    try {
+        $reviews = Flight::reviewsService()->getAll();
+        Flight::json(['data' => $reviews]);
+    } catch (Exception $e) {
+        error_log("Error fetching reviews: " . $e->getMessage());
+        Flight::json(['error' => 'Failed to fetch reviews'], 500);
+    }
+});
+
+/**
+ * @OA\Get(
  *     path="/reviews/product/{product_id}",
  *     summary="Get reviews by product ID",
  *     tags={"Reviews"},
@@ -36,7 +66,6 @@ Flight::register('reviewsService', 'ReviewsService');
  */
 //reviews - get by product
 Flight::route('GET /reviews/product/@product_id', function($product_id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByProductId($product_id));
 });
 
@@ -72,7 +101,6 @@ Flight::route('GET /reviews/product/@product_id', function($product_id){
  */
 //reviews - get by rating
 Flight::route('GET /reviews/rating/@rating', function($rating){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getByRating($rating));
 });
 
@@ -152,7 +180,6 @@ Flight::route('POST /reviews', function(){
  */
 //reviews - get single
 Flight::route('GET /reviews/@id', function($id){
-    Flight::auth_middleware()->authorizeRole(Roles::USER);
     Flight::json(Flight::reviewsService()->getById($id));
 });
 
