@@ -13,8 +13,12 @@
 
 /**
  * @OA\Server(
- *     url=BASE_URL,
- *     description="API server"
+ *     url="http://localhost/WebDevelopment25/backend",
+ *     description="Local Development Server"
+ * )
+ * @OA\Server(
+ *     url="https://web-full-stack-app-c2jkn.ondigitalocean.app/api",
+ *     description="Production Server"
  * )
  */
 
